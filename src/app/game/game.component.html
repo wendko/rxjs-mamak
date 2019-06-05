@@ -1,0 +1,8 @@
+<div style="background:yellowgreen;height:90vh;width:80vw;display:flex;flex-direction:row">
+  <div *ngFor="let item of items">
+    <app-item style="position:fixed;transition:all 0.5s linear" [ngStyle]="{'left': item.positionX+'vw'}">
+    </app-item>
+  </div>
+
+  <app-plate></app-plate>
+</div>
