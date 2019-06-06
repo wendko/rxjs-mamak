@@ -81,34 +81,34 @@ export class ItemComponent implements OnInit {
   renderItem() {
     switch (this.name) {
       case DrinkName[DrinkName.TehTarik]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
+        this.imageSource = 'assets/images/drink_tehtarik.png';
         break;
       case DrinkName[DrinkName.Kopi]:
-        this.imageSource = '../../assets/images/drink_kopi.png';
+        this.imageSource = 'assets/images/drink_kopi.png';
         break;
       case DrinkName[DrinkName.LimauAis]:
-        this.imageSource = '../../assets/images/drink_limauais.png';
+        this.imageSource = 'assets/images/drink_limauais.png';
         break;
       case DrinkName[DrinkName.SoyaCincau]:
-        this.imageSource = '../../assets/images/drink_soyacincau.png';
+        this.imageSource = 'assets/images/drink_soyacincau.png';
         break;
       case DrinkName[DrinkName.SirapBandung]:
-        this.imageSource = '../../assets/images/drink_bandung.png';
+        this.imageSource = 'assets/images/drink_bandung.png';
         break;
       case FoodName[FoodName.RotiCanai]:
-        this.imageSource = '../../assets/images/food_roticanai.png';
+        this.imageSource = 'assets/images/food_roticanai.png';
         break;
       case FoodName[FoodName.NasiLemak]:
-        this.imageSource = '../../assets/images/food_nasilemak.png';
+        this.imageSource = 'assets/images/food_nasilemak.png';
         break;
       case FoodName[FoodName.AsamLaksa]:
-        this.imageSource = '../../assets/images/food_asamlaksa.png';
+        this.imageSource = 'assets/images/food_asamlaksa.png';
         break;
       case FoodName[FoodName.RotiBakar]:
-        this.imageSource = '../../assets/images/food_rotibakar.png';
+        this.imageSource = 'assets/images/food_rotibakar.png';
         break;
       case FoodName[FoodName.AyamRendang]:
-        this.imageSource = '../../assets/images/food_ayamrendang.png';
+        this.imageSource = 'assets/images/food_ayamrendang.png';
         break;
       default:
         break;
