@@ -9,6 +9,8 @@ import { FoodService } from '../food.service';
 })
 export class ItemComponent implements OnInit {
 
+  // @Input() isMenuItem: boolean;
+
   @Input() name;
   @Input() type;
   @Input() positionX;
@@ -27,19 +29,25 @@ export class ItemComponent implements OnInit {
   ngOnInit() {
     this.renderItem();
 
-    this.foodService.timeKeeper(false, this.movementInterval)
-      .subscribe(this.descending.bind(this));
+    // if (!this.isMenuItem) {
 
-    interval(1).subscribe(this.trackLocation.bind(this));
-  }
-
-  renderItem() {
     this.positionY = this.startingPositionY;
 
     this.positionStyle = {
       top: this.positionY + 'vh',
       left: this.positionX + 'vw'
     };
+
+    this.trackLocation(true);
+
+    this.foodService.timeKeeper(false, this.movementInterval)
+      .subscribe(this.descending.bind(this));
+    // }
+
+    // interval(1).subscribe(this.trackLocation.bind(this));
+  }
+
+  renderItem() {
 
     switch (this.name) {
       case DrinkName[DrinkName.TehTarik]:
@@ -91,14 +99,12 @@ export class ItemComponent implements OnInit {
       this.positionStyle = {
         display: 'none'
       };
+      // this.trackLocation(false);
     }
   }
 
-  trackLocation() {
-    if (this.positionY <= this.maxHeight) {
-      // console.log(this.positionY);
-    }
-    // console.log(this.positionX);
+  trackLocation(doTrack: boolean) {
+    console.log(`tracking ${doTrack}`);
   }
 
 }

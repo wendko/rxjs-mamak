@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 5;
+  public gameDurationInSeconds = 10;
 
   public timeRunsOut(isTimer: boolean = false): Observable<number> {
     if (isTimer) {
