@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FoodService } from './food.service';
 
 @Component({
@@ -6,9 +6,13 @@ import { FoodService } from './food.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  topOrder;
 
   constructor(public foodService: FoodService) {
+  }
+
+  ngOnInit() {
   }
 
 }

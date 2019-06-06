@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, timer, interval } from 'rxjs';
+import { interval, Observable, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ItemType, DrinkName, FoodName } from './enum';
-
+import { DrinkName, FoodName, ItemType } from './enum';
 
 interface Item {
   type: ItemType;
@@ -16,12 +15,18 @@ export class FoodService {
   public gameDurationInSeconds = 10;
   public maxItemsCount = this.gameDurationInSeconds * 2;
   public orders;
+  public gameOver: boolean;
 
   public timeRunsOut(isTimer: boolean = false): Observable<number> {
     if (isTimer) {
-      return timer((this.gameDurationInSeconds + 1000) * 1000);
+      return timer((this.gameDurationInSeconds + 3) * 1000);
     }
     return timer(this.gameDurationInSeconds * 1000);
+  }
+
+  public startTimer() {
+    this.timeKeeper(true)
+      .subscribe(() => this.gameDurationInSeconds--);
   }
 
   public timeKeeper(isTimer: boolean = false, intervalUnit: number = 1000): Observable<number> {
@@ -68,17 +73,34 @@ export class FoodService {
     const totalNames = Object.keys(itemName).length / 2;
     const randomizedName = itemName[this.randomizeIndex(totalNames)];
 
-    console.log(`${randomizedType}: ${randomizedName}`);
     return { type: randomizedType, name: randomizedName };
   }
 
 
-  randomizeIndex(maxValue: number) {
+  randomizeIndex(maxValue: number): number {
     return Math.floor(Math.random() * Math.floor(maxValue));
   }
 
-  getTopOrder() {
+  getTopOrder(): Item[] {
     return this.orders[0];
+  }
+
+
+  checkOrder(itemName: FoodName | DrinkName): boolean {
+    const currentOrder = this.getTopOrder();
+    const foundOrder = currentOrder.find(item => item.name === itemName);
+    if (foundOrder) {
+      this.updateOrder();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  updateOrder() {
+
+    /** if all fulfilled */
+    this.orders.shift();
   }
 
 }

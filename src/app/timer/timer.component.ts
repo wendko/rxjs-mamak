@@ -14,7 +14,6 @@ export class TimerComponent implements OnInit {
 
   ngOnInit() {
     this.gameDuration = this.foodService.gameDurationInSeconds;
-
     this.foodService.timeKeeper(true)
       .subscribe(() => this.gameDuration--);
   }

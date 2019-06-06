@@ -1,12 +1,13 @@
-<div>
+<div style="height:20vh">
   <h2>
     TIMER
   </h2>
-  <h3 *ngIf="gameDuration > 0; else timeIsUp">
-    {{gameDuration}} seconds left
-  </h3>
+  <div *ngIf="gameDuration > 0; else timeIsUp">
+    <h1>{{gameDuration}}</h1>
+    <h2>seconds left</h2>
+  </div>
 </div>
 
 <ng-template #timeIsUp>
-  <h3>Time is up!</h3>
+  <h1>Time is up!</h1>
 </ng-template>

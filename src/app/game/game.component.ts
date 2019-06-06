@@ -34,8 +34,8 @@ export class GameComponent implements OnInit {
         this.spawnItem();
       });
 
-    this.foodService.timeKeeper(false, 1)
-      .subscribe(this.handleCollision.bind(this));
+    // this.foodService.timeKeeper(false, 1)
+    //   .subscribe(this.handleCollision.bind(this));
   }
 
   gameOver() {
@@ -66,16 +66,16 @@ export class GameComponent implements OnInit {
   }
 
 
-  handleCollision(): void {
-    // const plateObserver = this.foodService.timeKeeper(false, 1000);
-    // // const plateObserver = interval(5000);
-    // plateObserver.subscribe(() => console.log(this.plateComponent.positionX));
-    // console.log(this.plateComponent.positionX);
+  // handleCollision(): void {
+  //   // const plateObserver = this.foodService.timeKeeper(false, 1000);
+  //   // // const plateObserver = interval(5000);
+  //   // plateObserver.subscribe(() => console.log(this.plateComponent.positionX));
+  //   // console.log(this.plateComponent.positionX);
 
 
-    // get all items position
-    // console.log(this.items)
-  }
+  //   // get all items position
+  //   // console.log(this.items)
+  // }
 
 }
 

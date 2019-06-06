@@ -59,11 +59,11 @@ export class ItemComponent implements OnInit {
   }
 
   clickedItem() {
-    const currentOrder = this.foodService.getTopOrder();
-    const orderFulfilled = currentOrder.find(item => item.name === this.name);
-    // update order
+    if (this.foodService.gameOver) {
 
-    // update item
+    }
+
+    const orderFulfilled = this.foodService.checkOrder(this.name);
     this.clicked = true;
     this.addScore = orderFulfilled ? true : false;
     this.scoreText = this.getScoreText();
@@ -130,8 +130,8 @@ export class ItemComponent implements OnInit {
     };
   }
 
-  trackLocation(doTrack: boolean) {
-    console.log(`tracking ${doTrack}`);
-  }
+  // trackLocation(doTrack: boolean) {
+  //   console.log(`tracking ${doTrack}`);
+  // }
 
 }
