@@ -6,6 +6,7 @@ import { PlateComponent } from './plate/plate.component';
 import { ItemComponent } from './item/item.component';
 import { TimerComponent } from './timer/timer.component';
 import { GameComponent } from './game/game.component';
+import { FoodService } from './food.service';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { GameComponent } from './game/game.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [FoodService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

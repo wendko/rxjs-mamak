@@ -1,6 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { interval, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { FoodService } from '../food.service';
 
 @Component({
   selector: 'app-timer',
@@ -8,16 +7,15 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent implements OnInit {
-  @Input() gameDuration;
-  @Input() gameTimer;
+  gameDuration: number;
 
-  constructor() { }
+  constructor(private foodService: FoodService) {
+  }
 
   ngOnInit() {
-    const timeRunsOut = timer((this.gameDuration + 1000) * 1000);
+    this.gameDuration = this.foodService.gameDurationInSeconds;
 
-    interval(1000)
-      .pipe(takeUntil(timeRunsOut))
+    this.foodService.timeKeeper(true)
       .subscribe(() => this.gameDuration--);
   }
 

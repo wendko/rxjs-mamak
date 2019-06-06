@@ -1,8 +1,15 @@
-<div style="background:yellowgreen;height:90vh;width:80vw;display:flex;flex-direction:row">
+<div style="background:lightcoral;height:90vh;width:80vw;display:flex;flex-direction:row">
   <div *ngFor="let item of items">
-    <app-item style="position:fixed;transition:all 0.5s linear" [ngStyle]="{'left': item.positionX+'vw'}">
+    <app-item style="position:fixed;transition:all 0.5s linear" [name]="item.name" [type]="item.type"
+      [positionX]="item.positionX">
     </app-item>
   </div>
-
+  <div *ngIf="showGameOver" style="margin:auto">
+    GAME OVER!
+    <br>
+    Your score is {{score}}.
+    <br>
+    <button (click)="restart()" class="btn btn-primary">Play again?</button>
+  </div>
   <app-plate></app-plate>
 </div>

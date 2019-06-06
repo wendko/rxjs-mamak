@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { interval, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
+import { Component, OnInit } from '@angular/core';
+import { FoodName, ItemType, DrinkName } from '../enum';
+import { FoodService } from '../food.service';
+import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -9,34 +9,60 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class GameComponent implements OnInit {
   items: any[];
-  @Input() gameDuration: number;
+  showGameOver: boolean;
+  score: number;
 
-  constructor() {
+  constructor(
+    private foodService: FoodService
+  ) {
     this.items = [];
+    this.score = 0;
   }
 
   ngOnInit() {
-    const timeRunsOut = timer(this.gameDuration * 1000);
-    interval(1000)
-      .pipe(takeUntil(timeRunsOut))
-      .subscribe(() => this.spawnItem());
+    this.foodService.timeKeeper()
+      .pipe(finalize(() => this.showGameOver = true))
+      .subscribe(() => {
+        this.spawnItem();
+        this.handleCollision();
+      });
   }
 
-  spawnItem() {
-    const maxWidth = 80;
-    const positionX = Math.floor(Math.random() * Math.floor(maxWidth));
 
-    // randomize item type
+  spawnItem(): void {
+    const maxWidth = 75;
+    const positionX = this.randomizeIndex(maxWidth);
+    const { type, name } = this.randomizeItem();
+    this.items.push({ positionX: positionX, name: name, type: type });
+  }
 
-    this.items.push({ positionX });
+  handleCollision(): void {
+
+  }
+
+  randomizeItem(): { type, name } {
+    const totalTypes = Object.keys(ItemType).length / 2;
+    const randomizedType = ItemType[this.randomizeIndex(totalTypes)];
+    console.log(randomizedType);
+
+    const itemName = (randomizedType === ItemType[ItemType.Drink]) ? DrinkName : FoodName;
+
+    const totalNames = Object.keys(itemName).length / 2;
+    const randomizedName = itemName[this.randomizeIndex(totalNames)];
+    console.log(randomizedName);
+
+    return { type: randomizedType, name: randomizedName };
+  }
+
+  randomizeIndex(maxValue: number) {
+    return Math.floor(Math.random() * Math.floor(maxValue));
+  }
+
+  restart() {
+    location.reload();
+    // refinement : refresh timer, orders and game only
   }
 
 }
 
-
-// this.foodService.setRootViewContainerRef(this.viewContainerRef);
-// this.foodService.addDynamicComponent();
-
-
-// https://stackblitz.com/edit/rxjs-alphabet-invasion?file=index.ts - spawning vertically
 // https://stackblitz.com/edit/rxjs-breakout?file=index.ts - collision

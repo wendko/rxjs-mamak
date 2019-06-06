@@ -1,9 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-enum KEY_CODE {
-  RIGHT_ARROW = 39,
-  LEFT_ARROW = 37
-}
-
+import { KEY_CODE } from '../enum';
 
 @Component({
   selector: 'app-plate',
@@ -13,7 +9,7 @@ enum KEY_CODE {
 export class PlateComponent implements OnInit {
   positionX: number;
   movementUnit = 10;
-  maxLeft = 70;
+  maxLeft = 69;
   minLeft = 2;
 
   @HostListener('window:keyup', ['$event'])
