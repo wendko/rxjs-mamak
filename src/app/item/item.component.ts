@@ -23,7 +23,8 @@ export class ItemComponent implements OnInit {
   width: number;
   height: number;
   clicked: boolean;
-  scoreDisplay: string;
+  addScore: boolean;
+  scoreText: string;
 
   startingPositionY = 0;
   movementYUnit = 1;
@@ -58,16 +59,22 @@ export class ItemComponent implements OnInit {
   }
 
   clickedItem() {
-    // check if fulfills order
     const currentOrder = this.foodService.getTopOrder();
     const orderFulfilled = currentOrder.find(item => item.name === this.name);
+    // update order
+
+    // update item
     this.clicked = true;
-    if (orderFulfilled) {
-      this.scoreDisplay = '+1';
-      this.itemComponent.nativeElement.classList.add('clicked');
+    this.addScore = orderFulfilled ? true : false;
+    this.scoreText = this.getScoreText();
+    this.itemComponent.nativeElement.classList.add('clicked');
+  }
+
+  getScoreText(): string {
+    if (this.addScore) {
+      return 'Cool!';
     } else {
-      this.scoreDisplay = '-1';
-      this.itemComponent.nativeElement.classList.add('clicked');
+      return 'Nooo!';
     }
   }
 

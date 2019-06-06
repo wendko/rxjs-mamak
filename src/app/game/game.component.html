@@ -1,13 +1,16 @@
-<div style="background:lightcoral;height:90vh;width:80vw;display:flex;flex-direction:row">
+<div
+  style="background:url('../../assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row">
   <div *ngFor="let item of items">
     <app-item style="position:fixed;transition:all 0.5s linear" [name]="item.name" [type]="item.type"
       [positionX]="item.positionX">
     </app-item>
   </div>
-  <div *ngIf="showGameOver" style="margin:auto">
-    GAME OVER!
-    <br>
-    Your score is {{score}}.
+  <div *ngIf="showGameOver" style="margin:auto; text-shadow: 2px 2px white; text-align: center">
+    <div style="font-size: -webkit-xxx-large">
+      GAME OVER!
+      <br>
+      Your score is {{score}}.
+    </div>
     <br>
     <button (click)="restart()" class="btn btn-primary">Play again?</button>
   </div>
