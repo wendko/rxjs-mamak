@@ -1,5 +1,4 @@
-<div style="transition: all linear 0.1s;position:relative" [ngStyle]="positionStyle">
-  <svg _ngcontent-c1="" height="50" width="50">
-    <circle _ngcontent-c1="" cx="15" cy="15" [attr.fill]="fill" r="10" stroke="black" stroke-width="1"></circle>
-  </svg>
+<div #item [ngStyle]="positionStyle" class="">
+  <img [src]="imageSource" width="70" height="70">
+  <div id="itemName" *ngIf="clicked">{{name}}</div>
 </div>

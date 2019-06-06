@@ -1,0 +1,23 @@
+div {
+    transition: all linear 0.1s;
+    position:relative;
+
+    &:hover {
+        transform: scale(1.5) rotate(10deg);
+    }
+}
+
+.clicked {
+    opacity: 0;
+    animation: disappear 0.5s linear;
+}
+
+@keyframes disappear {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.1);
+    }
+}

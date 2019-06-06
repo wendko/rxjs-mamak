@@ -7,6 +7,7 @@ import { ItemComponent } from './item/item.component';
 import { TimerComponent } from './timer/timer.component';
 import { GameComponent } from './game/game.component';
 import { FoodService } from './food.service';
+import { OrderComponent } from './order/order.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { FoodService } from './food.service';
     PlateComponent,
     ItemComponent,
     TimerComponent,
-    GameComponent
+    GameComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule

@@ -21,7 +21,8 @@ export class GameComponent implements OnInit {
   queuedItems: any[];
   showGameOver: boolean;
   score: number;
-  maxItemsCount = 10;
+  maxItemsCount: number;
+  maxWidth = 70;
 
   @ViewChild(PlateComponent) plateComponent;
 
@@ -30,13 +31,14 @@ export class GameComponent implements OnInit {
   ) {
     this.items = [];
     this.score = 0;
+    this.maxItemsCount = this.foodService.gameDurationInSeconds * 2;
   }
 
   ngOnInit() {
     this.queueItemsAndOrder();
 
     // end everything together
-    this.foodService.timeKeeper()
+    this.foodService.timeKeeper(false, 500)
       .pipe(finalize(this.gameOver.bind(this)))
       .subscribe(() => {
         this.spawnItem();
@@ -52,8 +54,7 @@ export class GameComponent implements OnInit {
   }
 
   spawnItem(): void {
-    const maxWidth = 75;
-    const positionX = this.randomizeIndex(maxWidth);
+    const positionX = this.randomizeIndex(this.maxWidth);
     const queuedItem = this.queuedItems.pop();
     if (!queuedItem) {
       return;
