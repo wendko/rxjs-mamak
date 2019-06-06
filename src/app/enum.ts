@@ -11,18 +11,16 @@ export enum ItemType {
 export enum DrinkName {
     TehTarik,
     Kopi,
-    Cham,
-    KopiO,
-    KopiC,
-    TehOAis,
-    TehO,
-    TehC,
+    SoyaCincau,
+    LimauAis,
+    SirapBandung
 }
 
 export enum FoodName {
     RotiCanai,
-    RotiTelur,
-    RotiTosai,
-    NasiLemak
+    NasiLemak,
+    AsamLaksa,
+    RotiBakar,
+    AyamRendang
 }
 

@@ -1,4 +1,8 @@
-<div #item [ngStyle]="positionStyle" class="">
-  <img [src]="imageSource" width="70" height="70">
-  <div id="itemName" *ngIf="clicked">{{name}}</div>
+<div [ngStyle]="positionStyle">
+  <div #item>
+    <img [src]="imageSource" [width]="width" [height]="height" style="object-fit: contain">
+  </div>
+  <span id="itemClicked" *ngIf="clicked" [class.green]="scoreDisplay==='+1'" [class.red]="scoreDisplay==='-1'">
+    {{scoreDisplay}}
+  </span>
 </div>

@@ -9,8 +9,7 @@ import { takeUntil, finalize } from 'rxjs/operators';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit {
-  // @Input() isMenuItem: boolean;
-
+  @Input() isStatic: boolean;
   @Input() name;
   @Input() type;
   @Input() positionX;
@@ -21,6 +20,10 @@ export class ItemComponent implements OnInit {
   positionY: number;
   fill: string;
   imageSource: string;
+  width: number;
+  height: number;
+  clicked: boolean;
+  scoreDisplay: string;
 
   startingPositionY = 0;
   movementYUnit = 1;
@@ -32,16 +35,20 @@ export class ItemComponent implements OnInit {
   ngOnInit() {
     this.renderItem();
 
-    // if (!this.isMenuItem) {
+    if (this.isStatic) {
+      this.width = 40;
+      this.height = 40;
+      return;
+    }
 
+    this.width = 80;
+    this.height = 80;
     this.positionY = this.startingPositionY;
 
     this.positionStyle = {
       top: this.positionY + 'vh',
       left: this.positionX + 'vw'
     };
-
-    // this.trackLocation(true);
 
     const clicked = fromEvent(this.itemComponent.nativeElement, 'click');
 
@@ -52,8 +59,16 @@ export class ItemComponent implements OnInit {
 
   clickedItem() {
     // check if fulfills order
-    // add points
-    this.itemComponent.nativeElement.classList.add('clicked');
+    const currentOrder = this.foodService.getTopOrder();
+    const orderFulfilled = currentOrder.find(item => item.name === this.name);
+    this.clicked = true;
+    if (orderFulfilled) {
+      this.scoreDisplay = '+1';
+      this.itemComponent.nativeElement.classList.add('clicked');
+    } else {
+      this.scoreDisplay = '-1';
+      this.itemComponent.nativeElement.classList.add('clicked');
+    }
   }
 
   renderItem() {
@@ -62,37 +77,31 @@ export class ItemComponent implements OnInit {
         this.imageSource = '../../assets/images/drink_tehtarik.png';
         break;
       case DrinkName[DrinkName.Kopi]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
+        this.imageSource = '../../assets/images/drink_kopi.png';
         break;
-      case DrinkName[DrinkName.Cham]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
+      case DrinkName[DrinkName.LimauAis]:
+        this.imageSource = '../../assets/images/drink_limauais.png';
         break;
-      case DrinkName[DrinkName.KopiO]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
+      case DrinkName[DrinkName.SoyaCincau]:
+        this.imageSource = '../../assets/images/drink_soyacincau.png';
         break;
-      case DrinkName[DrinkName.KopiC]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
-        break;
-      case DrinkName[DrinkName.TehOAis]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
-        break;
-      case DrinkName[DrinkName.TehO]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
-        break;
-      case DrinkName[DrinkName.TehC]:
-        this.imageSource = '../../assets/images/drink_tehtarik.png';
+      case DrinkName[DrinkName.SirapBandung]:
+        this.imageSource = '../../assets/images/drink_bandung.png';
         break;
       case FoodName[FoodName.RotiCanai]:
         this.imageSource = '../../assets/images/food_roticanai.png';
         break;
-      case FoodName[FoodName.RotiTelur]:
-        this.imageSource = '../../assets/images/food_roticanai.png';
-        break;
-      case FoodName[FoodName.RotiTosai]:
-        this.imageSource = '../../assets/images/food_roticanai.png';
-        break;
       case FoodName[FoodName.NasiLemak]:
-        this.imageSource = '../../assets/images/food_roticanai.png';
+        this.imageSource = '../../assets/images/food_nasilemak.png';
+        break;
+      case FoodName[FoodName.AsamLaksa]:
+        this.imageSource = '../../assets/images/food_asamlaksa.png';
+        break;
+      case FoodName[FoodName.RotiBakar]:
+        this.imageSource = '../../assets/images/food_rotibakar.png';
+        break;
+      case FoodName[FoodName.AyamRendang]:
+        this.imageSource = '../../assets/images/food_ayamrendang.png';
         break;
       default:
         break;

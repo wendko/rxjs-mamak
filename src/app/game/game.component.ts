@@ -1,15 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FoodName, ItemType, DrinkName } from '../enum';
+import { finalize } from 'rxjs/operators';
 import { FoodService } from '../food.service';
-import { finalize, tap } from 'rxjs/operators';
-import { fromEvent, interval } from 'rxjs';
 import { PlateComponent } from '../plate/plate.component';
-import { ItemComponent } from '../item/item.component';
-
-interface Item {
-  type: ItemType;
-  name: DrinkName | FoodName;
-}
 
 @Component({
   selector: 'app-game',
@@ -21,7 +13,6 @@ export class GameComponent implements OnInit {
   queuedItems: any[];
   showGameOver: boolean;
   score: number;
-  maxItemsCount: number;
   maxWidth = 70;
 
   @ViewChild(PlateComponent) plateComponent;
@@ -31,7 +22,6 @@ export class GameComponent implements OnInit {
   ) {
     this.items = [];
     this.score = 0;
-    this.maxItemsCount = this.foodService.gameDurationInSeconds * 2;
   }
 
   ngOnInit() {
@@ -54,12 +44,25 @@ export class GameComponent implements OnInit {
   }
 
   spawnItem(): void {
-    const positionX = this.randomizeIndex(this.maxWidth);
+    const positionX = this.foodService.randomizeIndex(this.maxWidth);
     const queuedItem = this.queuedItems.pop();
     if (!queuedItem) {
       return;
     }
     this.items.push({ positionX: positionX, ...queuedItem });
+  }
+
+
+
+  queueItemsAndOrder() {
+    this.queuedItems = this.foodService.prepareItemsAndOrder();
+  }
+
+
+
+  restart() {
+    location.reload();
+    // refinement : refresh timer, orders and game only
   }
 
 
@@ -72,52 +75,6 @@ export class GameComponent implements OnInit {
 
     // get all items position
     // console.log(this.items)
-  }
-
-  queueItemsAndOrder() {
-    this.queuedItems = [];
-    const orders = [];
-    const orderLength = { max: 3, min: 1 };
-
-    let currentOrder = [];
-    let maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
-
-    while (this.queuedItems.length < this.maxItemsCount) {
-      const randomItem: Item = this.randomizeItem();
-      this.queuedItems.push(randomItem);
-
-      if (currentOrder.length < maxCurrentOrderCount) {
-        // just push every item first
-        currentOrder.push(randomItem);
-
-      } else {
-        orders.push(currentOrder);
-        currentOrder = [];
-        maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
-      }
-    }
-  }
-
-
-  randomizeItem(): { type, name } {
-    const totalTypes = Object.keys(ItemType).length / 2;
-    const randomizedType = ItemType[this.randomizeIndex(totalTypes)];
-
-    const itemName = (randomizedType === ItemType[ItemType.Drink]) ? DrinkName : FoodName;
-    const totalNames = Object.keys(itemName).length / 2;
-    const randomizedName = itemName[this.randomizeIndex(totalNames)];
-
-    console.log(`${randomizedType}: ${randomizedName}`);
-    return { type: randomizedType, name: randomizedName };
-  }
-
-  randomizeIndex(maxValue: number) {
-    return Math.floor(Math.random() * Math.floor(maxValue));
-  }
-
-  restart() {
-    location.reload();
-    // refinement : refresh timer, orders and game only
   }
 
 }
