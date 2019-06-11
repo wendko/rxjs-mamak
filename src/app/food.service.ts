@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { interval, Observable, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { delay, takeUntil } from 'rxjs/operators';
 import { DrinkName, FoodName, ItemType } from './enum';
 
 interface Item {
@@ -12,28 +12,40 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 10;
-  public maxItemsCount = this.gameDurationInSeconds * 2;
-  public orders;
-  public gameOver: boolean;
+  public gameDurationInSeconds = 10; // minimum 10 seconds
+  public orders = new Array(this.gameDurationInSeconds / 5); // every 10 seconds -> 1 order
+  private startGameDelay = 1000;
 
-  public timeRunsOut(isTimer: boolean = false): Observable<number> {
-    if (isTimer) {
-      return timer((this.gameDurationInSeconds + 3) * 1000);
+  constructor() {
+    this.timeRunsOut().subscribe(() => {
+      console.log('Game over!');
+    });
+  }
+
+  public timeRunsOut(): Observable<number> {
+    return timer((this.gameDurationInSeconds + 3) * 1000);
+  }
+
+  public timeKeeper(shouldDelay: boolean = false, intervalUnit: number = 1000): Observable<number> {
+    const timeInterval = interval(intervalUnit);
+
+    if (shouldDelay) {
+      return timeInterval.pipe(
+        delay(this.startGameDelay),
+        takeUntil(this.timeRunsOut())
+      );
+    } else {
+      return timeInterval.pipe(takeUntil(this.timeRunsOut()));
     }
-    return timer(this.gameDurationInSeconds * 1000);
   }
 
-  public startTimer() {
-    this.timeKeeper(true)
-      .subscribe(() => this.gameDurationInSeconds--);
+  public remainingOrderCount() {
+    return this.orders.length;
   }
 
-  public timeKeeper(isTimer: boolean = false, intervalUnit: number = 1000): Observable<number> {
-    const gameEnds = this.timeRunsOut(isTimer);
 
-    return interval(intervalUnit)
-      .pipe(takeUntil(gameEnds));
+  public getRandomOrderCount(min: number, max: number) {
+    return Math.random() * (max - min) + min;
   }
 
   public prepareItemsAndOrder(): Item[] {
@@ -42,20 +54,22 @@ export class FoodService {
     const orderLength = { max: 3, min: 1 };
 
     let currentOrder = [];
-    let maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
+    let maxCurrentOrderCount = this.getRandomOrderCount(orderLength.min, orderLength.max);
 
-    while (queuedItems.length < this.maxItemsCount) {
+    while (orders.length < this.orders.length) {
       const randomItem: Item = this.randomizeItem();
       queuedItems.push(randomItem);
 
       if (currentOrder.length < maxCurrentOrderCount) {
-        // just push every item first - must randomize!
-        currentOrder.push(randomItem);
-
+        const isMenuItem = (Math.random() * 100) < 20;
+        console.log(isMenuItem);
+        if (isMenuItem) {
+          currentOrder.push(randomItem);
+        }
       } else {
         orders.push(currentOrder);
         currentOrder = [];
-        maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
+        maxCurrentOrderCount = this.getRandomOrderCount(orderLength.min, orderLength.max);
       }
     }
 
@@ -98,7 +112,6 @@ export class FoodService {
   }
 
   updateOrder() {
-
     /** if all fulfilled */
     this.orders.shift();
   }

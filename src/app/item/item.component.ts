@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { interval, fromEvent } from 'rxjs';
+import { fromEvent, Observable } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { DrinkName, FoodName } from '../enum';
 import { FoodService } from '../food.service';
-import { takeUntil, finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
@@ -30,6 +30,7 @@ export class ItemComponent implements OnInit {
   movementYUnit = 1;
   movementInterval = 50;
   maxHeight = 85;
+  clickedEvent: Observable<MouseEvent>;
 
   constructor(private foodService: FoodService) { }
 
@@ -51,20 +52,27 @@ export class ItemComponent implements OnInit {
       left: this.positionX + 'vw'
     };
 
-    const clicked = fromEvent(this.itemComponent.nativeElement, 'click');
+    this.clickedEvent = fromEvent(this.itemComponent.nativeElement, 'click');
+    this.clickedEvent.subscribe(this.clickedItem.bind(this));
+
+    // this.gameOver = this.foodService.gameTimer();
+    // this.gameOver.subscribe(this.gameOver.bind(this));
 
     this.foodService.timeKeeper(false, this.movementInterval)
-      .pipe(takeUntil(clicked), finalize(() => { this.clickedItem(); }))
-      .subscribe(this.descending.bind(this));
+      .pipe(
+        takeUntil(this.clickedEvent),
+        tap(this.descending.bind(this))
+        // takeUntil(keyup), // take until game won
+        // finalize(() => {
+        //   // this.removeFromDisplay(); // this.clickedItem();
+        // })
+      )
+      .subscribe();
   }
 
   clickedItem() {
-    if (this.foodService.gameOver) {
-
-    }
-
-    const orderFulfilled = this.foodService.checkOrder(this.name);
     this.clicked = true;
+    const orderFulfilled = this.foodService.checkOrder(this.name);
     this.addScore = orderFulfilled ? true : false;
     this.scoreText = this.getScoreText();
     this.itemComponent.nativeElement.classList.add('clicked');
@@ -129,9 +137,5 @@ export class ItemComponent implements OnInit {
       display: 'none'
     };
   }
-
-  // trackLocation(doTrack: boolean) {
-  //   console.log(`tracking ${doTrack}`);
-  // }
 
 }

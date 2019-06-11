@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil, tap } from 'rxjs/operators';
 import { FoodService } from '../food.service';
 import { PlateComponent } from '../plate/plate.component';
 
@@ -27,20 +27,27 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.queueItemsAndOrder();
 
-    // end everything together
-    this.foodService.timeKeeper(false, 500)
-      .pipe(finalize(this.gameOver.bind(this)))
-      .subscribe(() => {
-        this.spawnItem();
-      });
+    const gameOver = this.foodService.timeRunsOut();
+    gameOver.subscribe(x => this.showGameOver = true);
+    // const gameWon = this.foodService.wonGame();
 
-    // this.foodService.timeKeeper(false, 1)
-    //   .subscribe(this.handleCollision.bind(this));
+    this.foodService.timeKeeper(true)
+      .pipe(
+        takeUntil(gameOver), // stop spawning when game is over
+        tap(this.spawnItem.bind(this)),
+        // takeUntil(gameWon), // stop spawning when game is won
+        finalize(this.resetGame.bind(this))
+      )
+      .subscribe();
+  }
+
+  resetGame() {
+    this.items = [];
+    // reset other stuff?
   }
 
   gameOver() {
     this.showGameOver = true;
-    this.items = [];
   }
 
   spawnItem(): void {
@@ -49,34 +56,16 @@ export class GameComponent implements OnInit {
     if (!queuedItem) {
       return;
     }
-    this.items.push({ positionX: positionX, ...queuedItem });
+    this.items.push({ positionX, ...queuedItem });
   }
-
-
 
   queueItemsAndOrder() {
     this.queuedItems = this.foodService.prepareItemsAndOrder();
   }
-
-
 
   restart() {
     location.reload();
     // refinement : refresh timer, orders and game only
   }
 
-
-  // handleCollision(): void {
-  //   // const plateObserver = this.foodService.timeKeeper(false, 1000);
-  //   // // const plateObserver = interval(5000);
-  //   // plateObserver.subscribe(() => console.log(this.plateComponent.positionX));
-  //   // console.log(this.plateComponent.positionX);
-
-
-  //   // get all items position
-  //   // console.log(this.items)
-  // }
-
 }
-
-// https://stackblitz.com/edit/rxjs-breakout?file=index.ts - collision

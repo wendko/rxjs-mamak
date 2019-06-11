@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FoodService } from '../food.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-timer',
@@ -15,7 +16,8 @@ export class TimerComponent implements OnInit {
   ngOnInit() {
     this.gameDuration = this.foodService.gameDurationInSeconds;
     this.foodService.timeKeeper(true)
-      .subscribe(() => this.gameDuration--);
+      .pipe(tap(() => this.gameDuration--))
+      .subscribe();
   }
 
 }
