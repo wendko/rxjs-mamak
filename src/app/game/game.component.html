@@ -6,24 +6,30 @@
     </app-item>
   </div>
 
-  <div style="margin:auto; text-shadow: 2px 2px white; text-align: center">
-    <div style="font-size: -webkit-xxx-large">
+  <div class="container">
+    <div class="font-large">
       {{countdownText}}
     </div>
 
+    <div *ngIf="this.showOrderFulfilled" class="font-temporary">
+      Extra 2 points for completed order!
+    </div>
+
     <div *ngIf="showGameOver">
-      <div *ngIf="!this.foodService.gameWon" style="font-size: -webkit-xxx-large">
+      <div *ngIf="!this.foodService.gameWon" class="font-large">
         GAME OVER!
         <br>
         Your score is {{foodService.score}}.
       </div>
-      <div *ngIf="this.foodService.gameWon" style="font-size: -webkit-xxx-large">
+      <div *ngIf="this.foodService.gameWon" class="font-large">
         YOU WON!
         <br>
         Your score is {{foodService.score}}.
       </div>
       <br>
-      <button (click)="restart()" class="btn btn-primary">Play again?</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" (click)="restart()">
+        Play again
+      </button>
     </div>
   </div>
 </div>

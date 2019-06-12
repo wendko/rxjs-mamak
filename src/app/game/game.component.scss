@@ -1,0 +1,24 @@
+.font-large {
+    font-size: -webkit-xxx-large;
+}
+
+.font-temporary {
+    font-size: xx-large;
+    animation: appearBriefly 2s linear;
+    opacity: 0;
+}
+
+.container {
+    margin:auto;
+    text-shadow: 2px 2px white;
+    text-align: center
+}
+
+@keyframes appearBriefly {
+    10%,90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

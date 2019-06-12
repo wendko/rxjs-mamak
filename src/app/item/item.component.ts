@@ -12,6 +12,7 @@ export class ItemComponent implements OnInit {
   @Input() isStatic: boolean;
   @Input() name;
   @Input() type;
+  @Input() done;
   @Input() positionX;
 
   @ViewChild('item') itemComponent;
@@ -26,7 +27,7 @@ export class ItemComponent implements OnInit {
   addScore: boolean;
   scoreText: string;
 
-  startingPositionY = 0;
+  startingPositionY = -5;
   movementYUnit = 1;
   movementInterval = 50;
   maxHeight = 85;
@@ -69,16 +70,8 @@ export class ItemComponent implements OnInit {
     this.clicked = true;
     const orderFulfilled = this.foodService.checkOrder(this.name);
     this.addScore = orderFulfilled ? true : false;
-    this.scoreText = this.getScoreText();
+    this.scoreText = this.foodService.getItemClickedText(this.addScore);
     this.itemComponent.nativeElement.classList.add('clicked');
-  }
-
-  getScoreText(): string {
-    if (this.addScore) {
-      return 'Cool!';
-    } else {
-      return 'Nooo!';
-    }
   }
 
   setItemImage() {

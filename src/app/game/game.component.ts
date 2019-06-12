@@ -16,6 +16,7 @@ export class GameComponent implements OnInit {
   score: number;
   maxWidth = 70;
   countdownText: string;
+  showOrderFulfilled: boolean;
 
   @ViewChild(PlateComponent) plateComponent;
 
@@ -28,11 +29,14 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.queuedItems = this.foodService.prepareItemsAndOrder();
+    const singleOrderFulfilled = this.foodService.ordersCompletedSubject.pipe(
+      tap(x => this.showOrderFulfilled = true)
+    );
 
     const spawningObservable = this.foodService.timeKeeper(true).pipe(
       tap(this.spawnItem.bind(this)),
       takeUntil(this.foodService.timeRunsOut()),
-      takeUntil(this.foodService.ordersCompleted),
+      takeUntil(this.foodService.gameWonSubject),
       finalize(() => {
         this.showGameOver = true;
         this.items = [];
@@ -48,7 +52,7 @@ export class GameComponent implements OnInit {
         finalize(() => { this.countdownText = ''; }),
       );
 
-
+    singleOrderFulfilled.subscribe();
     spawningObservable.subscribe();
     gameReadyObservable.subscribe();
   }
@@ -64,6 +68,7 @@ export class GameComponent implements OnInit {
 
 
   restart() {
+    this.showGameOver = false;
     this.foodService.reset();
     // more elegant reload!
     location.reload();

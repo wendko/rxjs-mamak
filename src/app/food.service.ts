@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { interval, Observable, timer, ReplaySubject } from 'rxjs';
+import { interval, Observable, timer, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { delay, takeUntil } from 'rxjs/operators';
 import { DrinkName, FoodName, ItemType } from './enum';
 
@@ -13,9 +13,9 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 20; // minimum 10 seconds
-  public startGameDelay = 0;
-  public maxOrderCount = 2;
+  public gameDurationInSeconds = 15; // minimum 10 seconds
+  public startGameDelay = 3000;
+  public maxOrderCount = 3;
   public scoreUnit = 1;
 
   public score: number;
@@ -24,19 +24,17 @@ export class FoodService {
   // public gameDurationInSeconds = 10; // minimum 10 seconds
   // public orders = new Array(this.gameDurationInSeconds / 5); // every 10 seconds -> 1 order
   // public startGameDelay = 3000;
-  public ordersCompleted: ReplaySubject<boolean>;
-
+  public gameWonSubject: ReplaySubject<boolean>;
+  public ordersCompletedSubject: ReplaySubject<number>;
   public gameWon: boolean;
+
+  private correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
+  private wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
+  private orderLength = { max: 1, min: 1 };
+
 
   constructor() {
     this.reset();
-
-    this.timeRunsOut().subscribe(() => {
-      console.log('Game over!');
-    });
-    this.ordersCompleted.subscribe(
-      x => console.log(`ordersCompleted ${x}`)
-    );
   }
 
   //#region time
@@ -61,7 +59,8 @@ export class FoodService {
   //#region misc
   reset(): void {
     this.orders = new Array(this.maxOrderCount);
-    this.ordersCompleted = new ReplaySubject();
+    this.gameWonSubject = new ReplaySubject();
+    this.ordersCompletedSubject = new ReplaySubject();
     this.gameWon = false;
     this.score = 0;
   }
@@ -69,16 +68,20 @@ export class FoodService {
   randomizeIndex(maxValue: number): number {
     return Math.floor(Math.random() * Math.floor(maxValue));
   }
+
+  getItemClickedText(isCorrect: boolean) {
+    const textArray = isCorrect ? this.correctTexts : this.wrongTexts;
+    return textArray[this.randomizeIndex(textArray.length)];
+  }
   //#endregion
 
   //#region items
   public prepareItemsAndOrder(): Item[] {
     const queuedItems: Item[] = [];
     const orders = [];
-    const orderLength = { max: 3, min: 1 };
 
     let currentOrder = [];
-    let maxCurrentOrderCount = this.getRandomOrderCount(orderLength.min, orderLength.max);
+    let maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
 
     while (orders.length < this.orders.length) {
       const randomItem: Item = this.randomizeItem();
@@ -92,7 +95,7 @@ export class FoodService {
       } else {
         orders.push(currentOrder);
         currentOrder = [];
-        maxCurrentOrderCount = this.getRandomOrderCount(orderLength.min, orderLength.max);
+        maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
       }
     }
 
@@ -120,13 +123,13 @@ export class FoodService {
 
   checkOrder(itemName: FoodName | DrinkName): boolean {
     const currentOrder = this.getTopOrder();
-    const foundOrder = currentOrder.find(item => item.name === itemName);
+    const foundOrder = currentOrder.find(item => item.name === itemName && !item.done);
     if (foundOrder) {
-      this.updateOrder(itemName, true);
+      this.updateOrder(foundOrder);
       this.checkGameStatus();
       return true;
     } else {
-      this.updateOrder(itemName, false);
+      this.updateOrder();
       return false;
     }
   }
@@ -134,22 +137,22 @@ export class FoodService {
   checkGameStatus(): void {
     if (this.orders.length === 0) {
       this.gameWon = true;
-      this.ordersCompleted.next(true);
+      this.gameWonSubject.next(true);
     }
   }
 
-  updateOrder(itemName: FoodName | DrinkName, isCorrectItem: boolean): void {
-    if (!isCorrectItem) {
+  updateOrder(foundOrder: Item = null): void {
+    if (!foundOrder) {
       this.score -= this.scoreUnit;
       return;
     }
 
-    const item = this.orders[0].find(x => x.name === itemName && !x.done);
-    item.done = true;
+    foundOrder.done = true;
     this.score += this.scoreUnit;
 
     const orderFulfilled = this.orders[0].every(x => x.done);
     if (orderFulfilled) {
+      this.ordersCompletedSubject.next(1);
       this.orders.shift();
       this.score += (this.scoreUnit * 2);
     }

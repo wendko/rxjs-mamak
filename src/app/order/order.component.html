@@ -1,5 +1,6 @@
 <div *ngFor="let item of order">
-  <app-item [name]="item.name" isStatic="true"></app-item>
+  <app-item [name]="item.name" [done]="item.done" isStatic="true">
+  </app-item>
   {{item.name}}
   <br><br>
 </div>
