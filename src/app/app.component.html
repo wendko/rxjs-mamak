@@ -9,10 +9,14 @@
   </div>
   <div style="width:100%;background:url('assets/images/notepad.jpg');text-align:center">
     <app-timer></app-timer>
-    <hr>
+    <hr style="border-top: dotted 3px gray">
+    <h2>
+      Score : {{foodService.score}}
+    </h2>
+    <hr style="border-top: dotted 3px gray">
     <!-- TODO: extract to component -->
     <h2>
-      Orders ({{foodService.remainingOrderCount()}} left)
+      Orders completed : {{foodService.maxOrderCount-foodService.remainingOrderCount()}} / {{foodService.maxOrderCount}}
     </h2>
     <div *ngIf="foodService.orders">
       <app-order [order]="foodService.getTopOrder()"></app-order>

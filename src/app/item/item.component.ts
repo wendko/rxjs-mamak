@@ -35,7 +35,7 @@ export class ItemComponent implements OnInit {
   constructor(private foodService: FoodService) { }
 
   ngOnInit() {
-    this.renderItem();
+    this.setItemImage();
 
     if (this.isStatic) {
       this.width = 40;
@@ -55,19 +55,14 @@ export class ItemComponent implements OnInit {
     this.clickedEvent = fromEvent(this.itemComponent.nativeElement, 'click');
     this.clickedEvent.subscribe(this.clickedItem.bind(this));
 
-    // this.gameOver = this.foodService.gameTimer();
-    // this.gameOver.subscribe(this.gameOver.bind(this));
-
-    this.foodService.timeKeeper(false, this.movementInterval)
+    const descendingObservable = this.foodService.timeKeeper(false, this.movementInterval)
       .pipe(
         takeUntil(this.clickedEvent),
-        tap(this.descending.bind(this))
-        // takeUntil(keyup), // take until game won
-        // finalize(() => {
-        //   // this.removeFromDisplay(); // this.clickedItem();
-        // })
-      )
-      .subscribe();
+        takeUntil(this.foodService.timeRunsOut()),
+        tap(this.descending.bind(this)),
+      );
+
+    descendingObservable.subscribe();
   }
 
   clickedItem() {
@@ -86,7 +81,7 @@ export class ItemComponent implements OnInit {
     }
   }
 
-  renderItem() {
+  setItemImage() {
     switch (this.name) {
       case DrinkName[DrinkName.TehTarik]:
         this.imageSource = 'assets/images/drink_tehtarik.png';

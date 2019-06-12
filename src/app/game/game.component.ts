@@ -20,25 +20,24 @@ export class GameComponent implements OnInit {
   @ViewChild(PlateComponent) plateComponent;
 
   constructor(
-    private foodService: FoodService
+    private foodService: FoodService,
   ) {
     this.items = [];
     this.score = 0;
   }
 
   ngOnInit() {
-    this.queueItemsAndOrder();
+    this.queuedItems = this.foodService.prepareItemsAndOrder();
 
-    const gameOverObservable = this.foodService.timeRunsOut();
-
-    // TODO: generate?
     const spawningObservable = this.foodService.timeKeeper(true).pipe(
       tap(this.spawnItem.bind(this)),
       takeUntil(this.foodService.timeRunsOut()),
       takeUntil(this.foodService.ordersCompleted),
-      finalize(this.resetGame.bind(this)),
+      finalize(() => {
+        this.showGameOver = true;
+        this.items = [];
+      }),
     );
-
 
     const gameReadyObservable = this.foodService.timeKeeper()
       .pipe(
@@ -54,11 +53,6 @@ export class GameComponent implements OnInit {
     gameReadyObservable.subscribe();
   }
 
-  resetGame() {
-    this.showGameOver = true;
-    this.items = [];
-  }
-
   spawnItem(): void {
     const positionX = this.foodService.randomizeIndex(this.maxWidth);
     const queuedItem = this.queuedItems.pop();
@@ -68,14 +62,11 @@ export class GameComponent implements OnInit {
     this.items.push({ positionX, ...queuedItem });
   }
 
-  queueItemsAndOrder() {
-    this.queuedItems = this.foodService.prepareItemsAndOrder();
-  }
 
   restart() {
-    location.reload();
+    this.foodService.reset();
     // more elegant reload!
-    // refinement : refresh timer, orders and game only
+    location.reload();
   }
 
 }

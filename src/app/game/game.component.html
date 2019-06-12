@@ -15,17 +15,15 @@
       <div *ngIf="!this.foodService.gameWon" style="font-size: -webkit-xxx-large">
         GAME OVER!
         <br>
-        Your score is {{score}}.
+        Your score is {{foodService.score}}.
       </div>
       <div *ngIf="this.foodService.gameWon" style="font-size: -webkit-xxx-large">
         YOU WON!
         <br>
-        Your score is {{score}}.
+        Your score is {{foodService.score}}.
       </div>
       <br>
       <button (click)="restart()" class="btn btn-primary">Play again?</button>
     </div>
-
-
   </div>
 </div>
