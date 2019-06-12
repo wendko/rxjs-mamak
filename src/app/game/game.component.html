@@ -5,14 +5,27 @@
       [positionX]="item.positionX">
     </app-item>
   </div>
-  <div *ngIf="showGameOver" style="margin:auto; text-shadow: 2px 2px white; text-align: center">
+
+  <div style="margin:auto; text-shadow: 2px 2px white; text-align: center">
     <div style="font-size: -webkit-xxx-large">
-      GAME OVER!
-      <br>
-      Your score is {{score}}.
+      {{countdownText}}
     </div>
-    <br>
-    <button (click)="restart()" class="btn btn-primary">Play again?</button>
+
+    <div *ngIf="showGameOver">
+      <div *ngIf="!this.foodService.gameWon" style="font-size: -webkit-xxx-large">
+        GAME OVER!
+        <br>
+        Your score is {{score}}.
+      </div>
+      <div *ngIf="this.foodService.gameWon" style="font-size: -webkit-xxx-large">
+        YOU WON!
+        <br>
+        Your score is {{score}}.
+      </div>
+      <br>
+      <button (click)="restart()" class="btn btn-primary">Play again?</button>
+    </div>
+
+
   </div>
-  <!-- <app-plate #plate></app-plate> -->
 </div>

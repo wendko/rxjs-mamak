@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { interval, Observable, timer } from 'rxjs';
+import { interval, Observable, timer, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { delay, takeUntil } from 'rxjs/operators';
 import { DrinkName, FoodName, ItemType } from './enum';
 
@@ -12,16 +12,30 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 10; // minimum 10 seconds
-  public orders = new Array(this.gameDurationInSeconds / 5); // every 10 seconds -> 1 order
-  private startGameDelay = 1000;
+  public orders = new Array(1); // every 10 seconds -> 1 order
+  public gameDurationInSeconds = 2; // minimum 10 seconds
+
+
+  // public gameDurationInSeconds = 10; // minimum 10 seconds
+  // public orders = new Array(this.gameDurationInSeconds / 5); // every 10 seconds -> 1 order
+  public startGameDelay = 3000;
+  public ordersCompleted: ReplaySubject<boolean>;
+
+  public gameWon: boolean;
 
   constructor() {
+    this.ordersCompleted = new ReplaySubject();
     this.timeRunsOut().subscribe(() => {
       console.log('Game over!');
     });
+    this.gameWon = false;
+
+    this.ordersCompleted.subscribe(
+      x => console.log(`ordersCompleted ${x}`)
+    );
   }
 
+  //#region time
   public timeRunsOut(): Observable<number> {
     return timer((this.gameDurationInSeconds + 3) * 1000);
   }
@@ -38,16 +52,15 @@ export class FoodService {
       return timeInterval.pipe(takeUntil(this.timeRunsOut()));
     }
   }
+  //#endregion
 
-  public remainingOrderCount() {
-    return this.orders.length;
+  //#region misc
+  randomizeIndex(maxValue: number): number {
+    return Math.floor(Math.random() * Math.floor(maxValue));
   }
+  //#endregion
 
-
-  public getRandomOrderCount(min: number, max: number) {
-    return Math.random() * (max - min) + min;
-  }
-
+  //#region items
   public prepareItemsAndOrder(): Item[] {
     const queuedItems: Item[] = [];
     const orders = [];
@@ -62,7 +75,6 @@ export class FoodService {
 
       if (currentOrder.length < maxCurrentOrderCount) {
         const isMenuItem = (Math.random() * 100) < 20;
-        console.log(isMenuItem);
         if (isMenuItem) {
           currentOrder.push(randomItem);
         }
@@ -78,7 +90,6 @@ export class FoodService {
     return queuedItems;
   }
 
-
   private randomizeItem(): { type, name } {
     const totalTypes = Object.keys(ItemType).length / 2;
     const randomizedType = ItemType[this.randomizeIndex(totalTypes)];
@@ -89,16 +100,12 @@ export class FoodService {
 
     return { type: randomizedType, name: randomizedName };
   }
+  //#endregion
 
-
-  randomizeIndex(maxValue: number): number {
-    return Math.floor(Math.random() * Math.floor(maxValue));
-  }
-
+  //#region order
   getTopOrder(): Item[] {
     return this.orders[0];
   }
-
 
   checkOrder(itemName: FoodName | DrinkName): boolean {
     const currentOrder = this.getTopOrder();
@@ -114,7 +121,20 @@ export class FoodService {
   updateOrder() {
     /** if all fulfilled */
     this.orders.shift();
+    if (this.orders.length === 0) {
+      this.gameWon = true;
+      this.ordersCompleted.next(true);
+    }
   }
+
+  public remainingOrderCount() {
+    return this.orders.length;
+  }
+
+  public getRandomOrderCount(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
+  //#endregion
 
 }
 
