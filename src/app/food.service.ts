@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { interval, Observable, timer, ReplaySubject, BehaviorSubject } from 'rxjs';
+import { interval, Observable, ReplaySubject, timer } from 'rxjs';
 import { delay, takeUntil } from 'rxjs/operators';
 import { DrinkName, FoodName, ItemType } from './enum';
 
@@ -19,18 +19,15 @@ export class FoodService {
   public scoreUnit = 1;
 
   public score: number;
-  public orders; // every 10 seconds -> 1 order
+  public orders;
 
-  // public gameDurationInSeconds = 10; // minimum 10 seconds
-  // public orders = new Array(this.gameDurationInSeconds / 5); // every 10 seconds -> 1 order
-  // public startGameDelay = 3000;
-  public gameWonSubject: ReplaySubject<boolean>;
+  public gameWon$: ReplaySubject<boolean>;
   public ordersCompletedSubject: ReplaySubject<number>;
   public gameWon: boolean;
 
   private correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
   private wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
-  private orderLength = { max: 1, min: 1 };
+  private orderLength = { max: 3, min: 1 };
 
 
   constructor() {
@@ -59,7 +56,7 @@ export class FoodService {
   //#region misc
   reset(): void {
     this.orders = new Array(this.maxOrderCount);
-    this.gameWonSubject = new ReplaySubject();
+    this.gameWon$ = new ReplaySubject();
     this.ordersCompletedSubject = new ReplaySubject();
     this.gameWon = false;
     this.score = 0;
@@ -83,11 +80,13 @@ export class FoodService {
     let currentOrder = [];
     let maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
 
+    // TODO: game logic is not correct! cannot win :(
     while (orders.length < this.orders.length) {
       const randomItem: Item = this.randomizeItem();
       queuedItems.push(randomItem);
 
       if (currentOrder.length < maxCurrentOrderCount) {
+        // 20% chance of this item being in current order
         const isMenuItem = (Math.random() * 100) < 20;
         if (isMenuItem) {
           currentOrder.push(randomItem);
@@ -137,7 +136,7 @@ export class FoodService {
   checkGameStatus(): void {
     if (this.orders.length === 0) {
       this.gameWon = true;
-      this.gameWonSubject.next(true);
+      this.gameWon$.next(true);
     }
   }
 

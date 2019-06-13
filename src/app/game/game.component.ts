@@ -29,21 +29,21 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.queuedItems = this.foodService.prepareItemsAndOrder();
-    const singleOrderFulfilled = this.foodService.ordersCompletedSubject.pipe(
+    const singleOrderFulfilled$ = this.foodService.ordersCompletedSubject.pipe(
       tap(x => this.showOrderFulfilled = true)
     );
 
-    const spawningObservable = this.foodService.timeKeeper(true).pipe(
+    const spawning$ = this.foodService.timeKeeper(true).pipe(
       tap(this.spawnItem.bind(this)),
       takeUntil(this.foodService.timeRunsOut()),
-      takeUntil(this.foodService.gameWonSubject),
+      takeUntil(this.foodService.gameWon$),
       finalize(() => {
         this.showGameOver = true;
         this.items = [];
       }),
     );
 
-    const gameReadyObservable = this.foodService.timeKeeper()
+    const gameReady$ = this.foodService.timeKeeper()
       .pipe(
         tap(x => {
           this.countdownText = !x ? 'Ready?' : 'Go!';
@@ -52,13 +52,13 @@ export class GameComponent implements OnInit {
         finalize(() => { this.countdownText = ''; }),
       );
 
-    singleOrderFulfilled.subscribe();
-    spawningObservable.subscribe();
-    gameReadyObservable.subscribe();
+    singleOrderFulfilled$.subscribe();
+    spawning$.subscribe();
+    gameReady$.subscribe();
   }
 
   spawnItem(): void {
-    const positionX = this.foodService.randomizeIndex(this.maxWidth);
+    const positionX = this.foodService.randomizeIndex(this.maxWidth - 50) + 50;
     const queuedItem = this.queuedItems.pop();
     if (!queuedItem) {
       return;
