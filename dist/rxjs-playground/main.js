@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h1 style=\"text-align: center\">\n  Nak Makan Apa?\n  <small>(BETA)</small>\n</h1>\n\n<div class=\"flex-container\">\n  <div style=\"background:yellow\">\n    <app-game></app-game>\n  </div>\n  <div style=\"width:100%;background:url('assets/images/notepad.jpg');text-align:center\">\n    <app-timer></app-timer>\n    <hr>\n    <h2>\n      Orders\n    </h2>\n    <div *ngIf=\"foodService.orders\">\n      <app-order [order]=\"foodService.getTopOrder()\"></app-order>\n    </div>\n  </div>\n</div>"
+module.exports = "<h1 style=\"text-align: center\">\n  Food!\n  <small>(BETA)</small>\n</h1>\n\n<div class=\"flex-container\">\n  <div style=\"background:yellow\">\n    <app-game></app-game>\n  </div>\n  <div style=\"width:100%;background:url('assets/images/notepad.jpg');text-align:center\">\n    <app-timer></app-timer>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Score : {{foodService.score}}\n    </h2>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Orders completed {{foodService.maxOrderCount-foodService.remainingOrderCount()}} / {{foodService.maxOrderCount}}\n    </h2>\n    <div *ngIf=\"foodService.orders\">\n      <app-order [order]=\"foodService.getTopOrder()\"></app-order>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -41,7 +41,7 @@ module.exports = "<h1 style=\"text-align: center\">\n  Nak Makan Apa?\n  <small>
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".flex-container {\n  display: flex;\n  align-items: stretch; }\n\n* {\n  font-family: 'Caveat', cursive; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsY0FBYTtFQUNiLHFCQUFvQixFQUNyQjs7QUFFRDtFQUNFLCtCQUNGLEVBQUMiLCJmaWxlIjoic3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZmxleC1jb250YWluZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogc3RyZXRjaDtcbn1cblxuKiB7XG4gIGZvbnQtZmFtaWx5OiAnQ2F2ZWF0JywgY3Vyc2l2ZVxufSJdfQ== */"
+module.exports = ".flex-container {\n  display: flex;\n  align-items: stretch; }\n\n* {\n  font-family: 'Fredoka One', cursive; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsY0FBYTtFQUNiLHFCQUFvQixFQUNyQjs7QUFFRDtFQUNFLG9DQUNGLEVBQUMiLCJmaWxlIjoic3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZmxleC1jb250YWluZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogc3RyZXRjaDtcbn1cblxuKiB7XG4gIGZvbnQtZmFtaWx5OiAnRnJlZG9rYSBPbmUnLCBjdXJzaXZlXG59Il19 */"
 
 /***/ }),
 
@@ -213,51 +213,75 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 
 
 
 
 var FoodService = /** @class */ (function () {
     function FoodService() {
-        this.gameDurationInSeconds = 10;
-        this.maxItemsCount = this.gameDurationInSeconds * 2;
+        this.gameDurationInSeconds = 15; // minimum 10 seconds
+        this.startGameDelay = 3000;
+        this.maxOrderCount = 3;
+        this.scoreUnit = 1;
+        this.correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
+        this.wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
+        this.orderLength = { max: 1, min: 1 };
+        this.reset();
     }
-    FoodService.prototype.timeRunsOut = function (isTimer) {
-        if (isTimer === void 0) { isTimer = false; }
-        if (isTimer) {
-            return Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])((this.gameDurationInSeconds + 3) * 1000);
-        }
-        return Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])(this.gameDurationInSeconds * 1000);
+    //#region time
+    FoodService.prototype.timeRunsOut = function () {
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])((this.gameDurationInSeconds + 3) * 1000);
     };
-    FoodService.prototype.startTimer = function () {
-        var _this = this;
-        this.timeKeeper(true)
-            .subscribe(function () { return _this.gameDurationInSeconds--; });
-    };
-    FoodService.prototype.timeKeeper = function (isTimer, intervalUnit) {
-        if (isTimer === void 0) { isTimer = false; }
+    FoodService.prototype.timeKeeper = function (shouldDelay, intervalUnit) {
+        if (shouldDelay === void 0) { shouldDelay = false; }
         if (intervalUnit === void 0) { intervalUnit = 1000; }
-        var gameEnds = this.timeRunsOut(isTimer);
-        return Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["interval"])(intervalUnit)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(gameEnds));
+        var timeInterval = Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["interval"])(intervalUnit);
+        if (shouldDelay) {
+            return timeInterval.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["delay"])(this.startGameDelay), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.timeRunsOut()));
+        }
+        else {
+            return timeInterval.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.timeRunsOut()));
+        }
     };
+    //#endregion
+    //#region misc
+    FoodService.prototype.reset = function () {
+        this.orders = new Array(this.maxOrderCount);
+        this.gameWonSubject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"]();
+        this.ordersCompletedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"]();
+        this.gameWon = false;
+        this.score = 0;
+    };
+    FoodService.prototype.randomizeIndex = function (maxValue) {
+        return Math.floor(Math.random() * Math.floor(maxValue));
+    };
+    FoodService.prototype.getItemClickedText = function (isCorrect) {
+        var textArray = isCorrect ? this.correctTexts : this.wrongTexts;
+        return textArray[this.randomizeIndex(textArray.length)];
+    };
+    //#endregion
+    //#region items
     FoodService.prototype.prepareItemsAndOrder = function () {
         var queuedItems = [];
         var orders = [];
-        var orderLength = { max: 3, min: 1 };
         var currentOrder = [];
-        var maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
-        while (queuedItems.length < this.maxItemsCount) {
+        var maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
+        while (orders.length < this.orders.length) {
             var randomItem = this.randomizeItem();
             queuedItems.push(randomItem);
             if (currentOrder.length < maxCurrentOrderCount) {
-                // just push every item first - must randomize!
-                currentOrder.push(randomItem);
+                var isMenuItem = (Math.random() * 100) < 20;
+                if (isMenuItem) {
+                    currentOrder.push(randomItem);
+                }
             }
             else {
                 orders.push(currentOrder);
                 currentOrder = [];
-                maxCurrentOrderCount = Math.random() * (orderLength.max - orderLength.min) + orderLength.min;
+                maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
             }
         }
         this.orders = orders;
@@ -269,33 +293,58 @@ var FoodService = /** @class */ (function () {
         var itemName = (randomizedType === _enum__WEBPACK_IMPORTED_MODULE_3__["ItemType"][_enum__WEBPACK_IMPORTED_MODULE_3__["ItemType"].Drink]) ? _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"] : _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"];
         var totalNames = Object.keys(itemName).length / 2;
         var randomizedName = itemName[this.randomizeIndex(totalNames)];
-        return { type: randomizedType, name: randomizedName };
+        return { type: randomizedType, name: randomizedName, done: false };
     };
-    FoodService.prototype.randomizeIndex = function (maxValue) {
-        return Math.floor(Math.random() * Math.floor(maxValue));
-    };
+    //#endregion
+    //#region order
     FoodService.prototype.getTopOrder = function () {
         return this.orders[0];
     };
     FoodService.prototype.checkOrder = function (itemName) {
         var currentOrder = this.getTopOrder();
-        var foundOrder = currentOrder.find(function (item) { return item.name === itemName; });
+        var foundOrder = currentOrder.find(function (item) { return item.name === itemName && !item.done; });
         if (foundOrder) {
-            this.updateOrder();
+            this.updateOrder(foundOrder);
+            this.checkGameStatus();
             return true;
         }
         else {
+            this.updateOrder();
             return false;
         }
     };
-    FoodService.prototype.updateOrder = function () {
-        /** if all fulfilled */
-        this.orders.shift();
+    FoodService.prototype.checkGameStatus = function () {
+        if (this.orders.length === 0) {
+            this.gameWon = true;
+            this.gameWonSubject.next(true);
+        }
+    };
+    FoodService.prototype.updateOrder = function (foundOrder) {
+        if (foundOrder === void 0) { foundOrder = null; }
+        if (!foundOrder) {
+            this.score -= this.scoreUnit;
+            return;
+        }
+        foundOrder.done = true;
+        this.score += this.scoreUnit;
+        var orderFulfilled = this.orders[0].every(function (x) { return x.done; });
+        if (orderFulfilled) {
+            this.ordersCompletedSubject.next(1);
+            this.orders.shift();
+            this.score += (this.scoreUnit * 2);
+        }
+    };
+    FoodService.prototype.remainingOrderCount = function () {
+        return this.orders.length;
+    };
+    FoodService.prototype.getRandomOrderCount = function (min, max) {
+        return Math.random() * (max - min) + min;
     };
     FoodService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
             providedIn: 'root'
-        })
+        }),
+        __metadata("design:paramtypes", [])
     ], FoodService);
     return FoodService;
 }());
@@ -312,7 +361,7 @@ var FoodService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n  <div *ngIf=\"showGameOver\" style=\"margin:auto; text-shadow: 2px 2px white; text-align: center\">\n    <div style=\"font-size: -webkit-xxx-large\">\n      GAME OVER!\n      <br>\n      Your score is {{score}}.\n    </div>\n    <br>\n    <button (click)=\"restart()\" class=\"btn btn-primary\">Play again?</button>\n  </div>\n  <!-- <app-plate #plate></app-plate> -->\n</div>"
+module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n\n  <div class=\"container\">\n    <div class=\"font-large\">\n      {{countdownText}}\n    </div>\n\n    <div *ngIf=\"this.showOrderFulfilled\" class=\"font-temporary\">\n      Extra 2 points for completed order!\n    </div>\n\n    <div *ngIf=\"showGameOver\">\n      <div *ngIf=\"!this.foodService.gameWon\" class=\"font-large\">\n        GAME OVER!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <div *ngIf=\"this.foodService.gameWon\" class=\"font-large\">\n        YOU WON!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <br>\n      <button class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full\" (click)=\"restart()\">\n        Play again\n      </button>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -323,7 +372,7 @@ module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2dhbWUvZ2FtZS5jb21wb25lbnQuc2NzcyJ9 */"
+module.exports = ".font-large {\n  font-size: -webkit-xxx-large; }\n\n.font-temporary {\n  font-size: xx-large;\n  -webkit-animation: appearBriefly 2s linear;\n          animation: appearBriefly 2s linear;\n  opacity: 0; }\n\n.container {\n  margin: auto;\n  text-shadow: 2px 2px white;\n  text-align: center; }\n\n@-webkit-keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvZ2FtZS9nYW1lLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksNkJBQTRCLEVBQy9COztBQUVEO0VBQ0ksb0JBQW1CO0VBQ25CLDJDQUFrQztVQUFsQyxtQ0FBa0M7RUFDbEMsV0FBVSxFQUNiOztBQUVEO0VBQ0ksYUFBVztFQUNYLDJCQUEwQjtFQUMxQixtQkFDSixFQUFDOztBQUVEO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBOztBQUxsQjtFQUNJO0lBQ0ksV0FBVSxFQUFBO0VBRWQ7SUFDSSxXQUFVLEVBQUEsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2dhbWUvZ2FtZS5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5mb250LWxhcmdlIHtcbiAgICBmb250LXNpemU6IC13ZWJraXQteHh4LWxhcmdlO1xufVxuXG4uZm9udC10ZW1wb3Jhcnkge1xuICAgIGZvbnQtc2l6ZTogeHgtbGFyZ2U7XG4gICAgYW5pbWF0aW9uOiBhcHBlYXJCcmllZmx5IDJzIGxpbmVhcjtcbiAgICBvcGFjaXR5OiAwO1xufVxuXG4uY29udGFpbmVyIHtcbiAgICBtYXJnaW46YXV0bztcbiAgICB0ZXh0LXNoYWRvdzogMnB4IDJweCB3aGl0ZTtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXJcbn1cblxuQGtleWZyYW1lcyBhcHBlYXJCcmllZmx5IHtcbiAgICAxMCUsOTAlIHtcbiAgICAgICAgb3BhY2l0eTogMTtcbiAgICB9XG4gICAgMTAwJSB7XG4gICAgICAgIG9wYWNpdHk6IDA7XG4gICAgfVxufSJdfQ== */"
 
 /***/ }),
 
@@ -338,9 +387,10 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GameComponent", function() { return GameComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
-/* harmony import */ var _food_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../food.service */ "./src/app/food.service.ts");
-/* harmony import */ var _plate_plate_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../plate/plate.component */ "./src/app/plate/plate.component.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var _food_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../food.service */ "./src/app/food.service.ts");
+/* harmony import */ var _plate_plate_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../plate/plate.component */ "./src/app/plate/plate.component.ts");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -365,6 +415,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var GameComponent = /** @class */ (function () {
     function GameComponent(foodService) {
         this.foodService = foodService;
@@ -374,19 +425,19 @@ var GameComponent = /** @class */ (function () {
     }
     GameComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.queueItemsAndOrder();
-        // end everything together
-        this.foodService.timeKeeper(false, 500)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["finalize"])(this.gameOver.bind(this)))
-            .subscribe(function () {
-            _this.spawnItem();
-        });
-        // this.foodService.timeKeeper(false, 1)
-        //   .subscribe(this.handleCollision.bind(this));
-    };
-    GameComponent.prototype.gameOver = function () {
-        this.showGameOver = true;
-        this.items = [];
+        this.queuedItems = this.foodService.prepareItemsAndOrder();
+        var singleOrderFulfilled = this.foodService.ordersCompletedSubject.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (x) { return _this.showOrderFulfilled = true; }));
+        var spawningObservable = this.foodService.timeKeeper(true).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(this.spawnItem.bind(this)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.timeRunsOut()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.gameWonSubject), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () {
+            _this.showGameOver = true;
+            _this.items = [];
+        }));
+        var gameReadyObservable = this.foodService.timeKeeper()
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (x) {
+            _this.countdownText = !x ? 'Ready?' : 'Go!';
+        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])(this.foodService.startGameDelay)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () { _this.countdownText = ''; }));
+        singleOrderFulfilled.subscribe();
+        spawningObservable.subscribe();
+        gameReadyObservable.subscribe();
     };
     GameComponent.prototype.spawnItem = function () {
         var positionX = this.foodService.randomizeIndex(this.maxWidth);
@@ -396,15 +447,14 @@ var GameComponent = /** @class */ (function () {
         }
         this.items.push(__assign({ positionX: positionX }, queuedItem));
     };
-    GameComponent.prototype.queueItemsAndOrder = function () {
-        this.queuedItems = this.foodService.prepareItemsAndOrder();
-    };
     GameComponent.prototype.restart = function () {
+        this.showGameOver = false;
+        this.foodService.reset();
+        // more elegant reload!
         location.reload();
-        // refinement : refresh timer, orders and game only
     };
     __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])(_plate_plate_component__WEBPACK_IMPORTED_MODULE_3__["PlateComponent"]),
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])(_plate_plate_component__WEBPACK_IMPORTED_MODULE_4__["PlateComponent"]),
         __metadata("design:type", Object)
     ], GameComponent.prototype, "plateComponent", void 0);
     GameComponent = __decorate([
@@ -413,12 +463,11 @@ var GameComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./game.component.html */ "./src/app/game/game.component.html"),
             styles: [__webpack_require__(/*! ./game.component.scss */ "./src/app/game/game.component.scss")]
         }),
-        __metadata("design:paramtypes", [_food_service__WEBPACK_IMPORTED_MODULE_2__["FoodService"]])
+        __metadata("design:paramtypes", [_food_service__WEBPACK_IMPORTED_MODULE_3__["FoodService"]])
     ], GameComponent);
     return GameComponent;
 }());
 
-// https://stackblitz.com/edit/rxjs-breakout?file=index.ts - collision
 
 
 /***/ }),
@@ -430,7 +479,7 @@ var GameComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [ngStyle]=\"positionStyle\">\n  <div #item>\n    <img [src]=\"imageSource\" [width]=\"width\" [height]=\"height\" style=\"object-fit: contain\">\n  </div>\n  <span id=\"itemClicked\" *ngIf=\"clicked\" [class.green]=\"addScore\" [class.red]=\"!addScore\">\n    {{scoreText}}\n    <br>\n    {{addScore ? \"+1\" : \"-1\"}}\n  </span>\n</div>"
+module.exports = "<div [ngStyle]=\"positionStyle\">\n  <div #item [class.done]=\"done\">\n    <img [src]=\"imageSource\" [width]=\"width\" [height]=\"height\" style=\"object-fit: contain\">\n  </div>\n  <span id=\"itemClicked\" *ngIf=\"clicked\" [class.green]=\"addScore\" [class.red]=\"!addScore\">\n    {{scoreText}}\n    <br>\n    {{addScore ? \"+1\" : \"-1\"}}\n  </span>\n</div>"
 
 /***/ }),
 
@@ -441,7 +490,7 @@ module.exports = "<div [ngStyle]=\"positionStyle\">\n  <div #item>\n    <img [sr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "div {\n  transition: all linear 0.1s;\n  position: relative; }\n  div:hover {\n    -webkit-transform: scale(1.3);\n            transform: scale(1.3); }\n  span, span > * {\n  position: relative;\n  opacity: 0;\n  font-size: xx-large;\n  text-shadow: 1px 1px black;\n  -webkit-animation: scoreDisappear 1s linear;\n          animation: scoreDisappear 1s linear;\n  top: -50px; }\n  .red {\n  color: red; }\n  .green {\n  color: lightgreen; }\n  @-webkit-keyframes scoreDisappear {\n  0%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n  @keyframes scoreDisappear {\n  0%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n  .clicked {\n  opacity: 0;\n  -webkit-animation: disappear 0.5s linear;\n          animation: disappear 0.5s linear; }\n  @-webkit-keyframes disappear {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0;\n    -webkit-transform: scale(0.1) rotate(-50deg);\n            transform: scale(0.1) rotate(-50deg); } }\n  @keyframes disappear {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0;\n    -webkit-transform: scale(0.1) rotate(-50deg);\n            transform: scale(0.1) rotate(-50deg); } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvaXRlbS9pdGVtLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksNEJBQTJCO0VBQzNCLG1CQUFpQixFQUtwQjtFQVBEO0lBS1EsOEJBQXFCO1lBQXJCLHNCQUFxQixFQUN4QjtFQUdMO0VBQ0ksbUJBQWtCO0VBQ2xCLFdBQVU7RUFDVixvQkFBbUI7RUFDbkIsMkJBQTBCO0VBQzFCLDRDQUFtQztVQUFuQyxvQ0FBbUM7RUFDbkMsV0FBVSxFQUNiO0VBRUQ7RUFDSSxXQUFVLEVBQ2I7RUFFRDtFQUNJLGtCQUFpQixFQUNwQjtFQUdEO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBO0VBTGxCO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBO0VBSWxCO0VBQ0ksV0FBVTtFQUNWLHlDQUFnQztVQUFoQyxpQ0FBZ0MsRUFDbkM7RUFFRDtFQUNJO0lBQ0ksV0FBVSxFQUFBO0VBRWQ7SUFDSSxXQUFVO0lBQ1YsNkNBQW9DO1lBQXBDLHFDQUFvQyxFQUFBLEVBQUE7RUFONUM7RUFDSTtJQUNJLFdBQVUsRUFBQTtFQUVkO0lBQ0ksV0FBVTtJQUNWLDZDQUFvQztZQUFwQyxxQ0FBb0MsRUFBQSxFQUFBIiwiZmlsZSI6InNyYy9hcHAvaXRlbS9pdGVtLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiZGl2IHtcbiAgICB0cmFuc2l0aW9uOiBhbGwgbGluZWFyIDAuMXM7XG4gICAgcG9zaXRpb246cmVsYXRpdmU7XG5cbiAgICAmOmhvdmVyIHtcbiAgICAgICAgdHJhbnNmb3JtOiBzY2FsZSgxLjMpO1xuICAgIH1cbn1cblxuc3Bhbiwgc3Bhbj4qIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgb3BhY2l0eTogMDtcbiAgICBmb250LXNpemU6IHh4LWxhcmdlO1xuICAgIHRleHQtc2hhZG93OiAxcHggMXB4IGJsYWNrO1xuICAgIGFuaW1hdGlvbjogc2NvcmVEaXNhcHBlYXIgMXMgbGluZWFyO1xuICAgIHRvcDogLTUwcHg7XG59XG5cbi5yZWQge1xuICAgIGNvbG9yOiByZWQ7XG59XG5cbi5ncmVlbiB7XG4gICAgY29sb3I6IGxpZ2h0Z3JlZW47XG59XG5cblxuQGtleWZyYW1lcyBzY29yZURpc2FwcGVhciB7XG4gICAgMCUsIDkwJSB7XG4gICAgICAgIG9wYWNpdHk6IDE7XG4gICAgfVxuICAgIDEwMCUge1xuICAgICAgICBvcGFjaXR5OiAwO1xuICAgIH1cbn1cblxuLmNsaWNrZWQge1xuICAgIG9wYWNpdHk6IDA7XG4gICAgYW5pbWF0aW9uOiBkaXNhcHBlYXIgMC41cyBsaW5lYXI7XG59XG5cbkBrZXlmcmFtZXMgZGlzYXBwZWFyIHtcbiAgICAwJSB7XG4gICAgICAgIG9wYWNpdHk6IDE7XG4gICAgfVxuICAgIDEwMCUge1xuICAgICAgICBvcGFjaXR5OiAwO1xuICAgICAgICB0cmFuc2Zvcm06IHNjYWxlKDAuMSkgcm90YXRlKC01MGRlZyk7XG4gICAgfVxufVxuIl19 */"
+module.exports = "div {\n  transition: all linear 0.1s;\n  position: relative;\n  -webkit-animation: appear 0.2s ease-in;\n          animation: appear 0.2s ease-in; }\n  div:hover {\n    -webkit-transform: scale(1.3);\n            transform: scale(1.3); }\n  span, span > * {\n  position: relative;\n  opacity: 0;\n  font-size: xx-large;\n  text-shadow: 1px 1px black;\n  -webkit-animation: scoreDisappear 1s linear;\n          animation: scoreDisappear 1s linear;\n  top: -50px; }\n  .red {\n  color: red; }\n  .green {\n  color: lightgreen; }\n  .clicked {\n  opacity: 0;\n  -webkit-animation: disappear 0.5s linear;\n          animation: disappear 0.5s linear; }\n  .done > img {\n  opacity: 0.5; }\n  .done:after {\n  content: \"\";\n  width: 8px;\n  background: green;\n  position: absolute;\n  -webkit-transform: rotate(45deg);\n  transform: rotate(45deg);\n  height: 35px;\n  left: 110px; }\n  .done:before {\n  content: \"\";\n  width: 8px;\n  background: green;\n  position: absolute;\n  -webkit-transform: rotate(-45deg);\n  transform: rotate(-45deg);\n  height: 20px;\n  left: 93px;\n  top: 10px;\n  z-index: 1; }\n  @-webkit-keyframes disappear {\n  0% {\n    opacity: 1; }\n  50% {\n    -webkit-transform: scale(2);\n            transform: scale(2); }\n  100% {\n    opacity: 0;\n    -webkit-transform: scale(0.1) rotate(-480deg);\n            transform: scale(0.1) rotate(-480deg); } }\n  @keyframes disappear {\n  0% {\n    opacity: 1; }\n  50% {\n    -webkit-transform: scale(2);\n            transform: scale(2); }\n  100% {\n    opacity: 0;\n    -webkit-transform: scale(0.1) rotate(-480deg);\n            transform: scale(0.1) rotate(-480deg); } }\n  @-webkit-keyframes scoreDisappear {\n  0%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n  @keyframes scoreDisappear {\n  0%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n  @-webkit-keyframes appear {\n  0% {\n    -webkit-transform: scale(0.1);\n            transform: scale(0.1); } }\n  @keyframes appear {\n  0% {\n    -webkit-transform: scale(0.1);\n            transform: scale(0.1); } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvaXRlbS9pdGVtLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksNEJBQTJCO0VBQzNCLG1CQUFpQjtFQUNqQix1Q0FBOEI7VUFBOUIsK0JBQThCLEVBS2pDO0VBUkQ7SUFNUSw4QkFBcUI7WUFBckIsc0JBQXFCLEVBQ3hCO0VBR0w7RUFDSSxtQkFBa0I7RUFDbEIsV0FBVTtFQUNWLG9CQUFtQjtFQUNuQiwyQkFBMEI7RUFDMUIsNENBQW1DO1VBQW5DLG9DQUFtQztFQUNuQyxXQUFVLEVBQ2I7RUFFRDtFQUNJLFdBQVUsRUFDYjtFQUVEO0VBQ0ksa0JBQWlCLEVBQ3BCO0VBRUQ7RUFDSSxXQUFVO0VBQ1YseUNBQWdDO1VBQWhDLGlDQUFnQyxFQUNuQztFQVdEO0VBRVEsYUFBWSxFQUNmO0VBSEw7RUFSSSxZQUFXO0VBQ1gsV0FBVTtFQUNWLGtCQUFpQjtFQUNqQixtQkFBa0I7RUFDbEIsaUNBQTBDO0VBQzFDLHlCQUFrQztFQVM5QixhQUFZO0VBQ1osWUFBVyxFQUNkO0VBUkw7RUFSSSxZQUFXO0VBQ1gsV0FBVTtFQUNWLGtCQUFpQjtFQUNqQixtQkFBa0I7RUFDbEIsa0NBQTBDO0VBQzFDLDBCQUFrQztFQWM5QixhQUFZO0VBQ1osV0FBVTtFQUNWLFVBQVM7RUFDVCxXQUFVLEVBQ2I7RUFHTDtFQUNJO0lBQ0ksV0FBVSxFQUFBO0VBRWQ7SUFDSSw0QkFBbUI7WUFBbkIsb0JBQW1CLEVBQUE7RUFFdkI7SUFDSSxXQUFVO0lBQ1YsOENBQXFDO1lBQXJDLHNDQUFxQyxFQUFBLEVBQUE7RUFUN0M7RUFDSTtJQUNJLFdBQVUsRUFBQTtFQUVkO0lBQ0ksNEJBQW1CO1lBQW5CLG9CQUFtQixFQUFBO0VBRXZCO0lBQ0ksV0FBVTtJQUNWLDhDQUFxQztZQUFyQyxzQ0FBcUMsRUFBQSxFQUFBO0VBSzdDO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBO0VBTGxCO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBO0VBSWxCO0VBQ0k7SUFBSSw4QkFBcUI7WUFBckIsc0JBQXFCLEVBQUEsRUFBQTtFQUQ3QjtFQUNJO0lBQUksOEJBQXFCO1lBQXJCLHNCQUFxQixFQUFBLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9pdGVtL2l0ZW0uY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJkaXYge1xuICAgIHRyYW5zaXRpb246IGFsbCBsaW5lYXIgMC4xcztcbiAgICBwb3NpdGlvbjpyZWxhdGl2ZTtcbiAgICBhbmltYXRpb246IGFwcGVhciAwLjJzIGVhc2UtaW47XG5cbiAgICAmOmhvdmVyIHtcbiAgICAgICAgdHJhbnNmb3JtOiBzY2FsZSgxLjMpO1xuICAgIH1cbn1cblxuc3Bhbiwgc3Bhbj4qIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgb3BhY2l0eTogMDtcbiAgICBmb250LXNpemU6IHh4LWxhcmdlO1xuICAgIHRleHQtc2hhZG93OiAxcHggMXB4IGJsYWNrO1xuICAgIGFuaW1hdGlvbjogc2NvcmVEaXNhcHBlYXIgMXMgbGluZWFyO1xuICAgIHRvcDogLTUwcHg7XG59XG5cbi5yZWQge1xuICAgIGNvbG9yOiByZWQ7XG59XG5cbi5ncmVlbiB7XG4gICAgY29sb3I6IGxpZ2h0Z3JlZW47XG59XG5cbi5jbGlja2VkIHtcbiAgICBvcGFjaXR5OiAwO1xuICAgIGFuaW1hdGlvbjogZGlzYXBwZWFyIDAuNXMgbGluZWFyO1xufVxuXG5AbWl4aW4gdGljaygkcm90YXRpb24tYW5nbGUpIHtcbiAgICBjb250ZW50OiBcIlwiO1xuICAgIHdpZHRoOiA4cHg7XG4gICAgYmFja2dyb3VuZDogZ3JlZW47XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIC13ZWJraXQtdHJhbnNmb3JtOiByb3RhdGUoJHJvdGF0aW9uLWFuZ2xlKTtcbiAgICB0cmFuc2Zvcm06IHJvdGF0ZSgkcm90YXRpb24tYW5nbGUpO1xufVxuXG4uZG9uZSB7XG4gICAgJj5pbWd7XG4gICAgICAgIG9wYWNpdHk6IDAuNTtcbiAgICB9XG4gICAgJjphZnRlcntcbiAgICAgICAgQGluY2x1ZGUgdGljayg0NWRlZyk7XG4gICAgICAgIGhlaWdodDogMzVweDtcbiAgICAgICAgbGVmdDogMTEwcHg7XG4gICAgfVxuICAgICY6YmVmb3Jle1xuICAgICAgICBAaW5jbHVkZSB0aWNrKC00NWRlZyk7XG4gICAgICAgIGhlaWdodDogMjBweDtcbiAgICAgICAgbGVmdDogOTNweDtcbiAgICAgICAgdG9wOiAxMHB4O1xuICAgICAgICB6LWluZGV4OiAxO1xuICAgIH1cbn1cblxuQGtleWZyYW1lcyBkaXNhcHBlYXIge1xuICAgIDAlIHtcbiAgICAgICAgb3BhY2l0eTogMTtcbiAgICB9XG4gICAgNTAlIHtcbiAgICAgICAgdHJhbnNmb3JtOiBzY2FsZSgyKTtcbiAgICB9XG4gICAgMTAwJSB7XG4gICAgICAgIG9wYWNpdHk6IDA7XG4gICAgICAgIHRyYW5zZm9ybTogc2NhbGUoMC4xKSByb3RhdGUoLTQ4MGRlZyk7XG4gICAgfVxufVxuXG5cbkBrZXlmcmFtZXMgc2NvcmVEaXNhcHBlYXIge1xuICAgIDAlLCA5MCUge1xuICAgICAgICBvcGFjaXR5OiAxO1xuICAgIH1cbiAgICAxMDAlIHtcbiAgICAgICAgb3BhY2l0eTogMDtcbiAgICB9XG59XG5cbkBrZXlmcmFtZXMgYXBwZWFyIHtcbiAgICAwJSB7dHJhbnNmb3JtOiBzY2FsZSgwLjEpfVxufSJdfQ== */"
 
 /***/ }),
 
@@ -457,9 +506,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ItemComponent", function() { return ItemComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
-/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../enum */ "./src/app/enum.ts");
-/* harmony import */ var _food_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../food.service */ "./src/app/food.service.ts");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../enum */ "./src/app/enum.ts");
+/* harmony import */ var _food_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../food.service */ "./src/app/food.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -477,14 +526,13 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var ItemComponent = /** @class */ (function () {
     function ItemComponent(foodService) {
         this.foodService = foodService;
-        this.startingPositionY = 0;
+        this.startingPositionY = -5;
         this.movementYUnit = 1;
         this.movementInterval = 50;
         this.maxHeight = 85;
     }
     ItemComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        this.renderItem();
+        this.setItemImage();
         if (this.isStatic) {
             this.width = 40;
             this.height = 40;
@@ -497,58 +545,49 @@ var ItemComponent = /** @class */ (function () {
             top: this.positionY + 'vh',
             left: this.positionX + 'vw'
         };
-        var clicked = Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["fromEvent"])(this.itemComponent.nativeElement, 'click');
-        this.foodService.timeKeeper(false, this.movementInterval)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["takeUntil"])(clicked), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["finalize"])(function () { _this.clickedItem(); }))
-            .subscribe(this.descending.bind(this));
+        this.clickedEvent = Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["fromEvent"])(this.itemComponent.nativeElement, 'click');
+        this.clickedEvent.subscribe(this.clickedItem.bind(this));
+        var descendingObservable = this.foodService.timeKeeper(false, this.movementInterval)
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.clickedEvent), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.timeRunsOut()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(this.descending.bind(this)));
+        descendingObservable.subscribe();
     };
     ItemComponent.prototype.clickedItem = function () {
-        if (this.foodService.gameOver) {
-        }
-        var orderFulfilled = this.foodService.checkOrder(this.name);
         this.clicked = true;
+        var orderFulfilled = this.foodService.checkOrder(this.name);
         this.addScore = orderFulfilled ? true : false;
-        this.scoreText = this.getScoreText();
+        this.scoreText = this.foodService.getItemClickedText(this.addScore);
         this.itemComponent.nativeElement.classList.add('clicked');
     };
-    ItemComponent.prototype.getScoreText = function () {
-        if (this.addScore) {
-            return 'Cool!';
-        }
-        else {
-            return 'Nooo!';
-        }
-    };
-    ItemComponent.prototype.renderItem = function () {
+    ItemComponent.prototype.setItemImage = function () {
         switch (this.name) {
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"].TehTarik]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"].TehTarik]:
                 this.imageSource = 'assets/images/drink_tehtarik.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"].Kopi]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"].Kopi]:
                 this.imageSource = 'assets/images/drink_kopi.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"].LimauAis]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"].LimauAis]:
                 this.imageSource = 'assets/images/drink_limauais.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"].SoyaCincau]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"].SoyaCincau]:
                 this.imageSource = 'assets/images/drink_soyacincau.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_2__["DrinkName"].SirapBandung]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"][_enum__WEBPACK_IMPORTED_MODULE_3__["DrinkName"].SirapBandung]:
                 this.imageSource = 'assets/images/drink_bandung.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"].RotiCanai]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"].RotiCanai]:
                 this.imageSource = 'assets/images/food_roticanai.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"].NasiLemak]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"].NasiLemak]:
                 this.imageSource = 'assets/images/food_nasilemak.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"].AsamLaksa]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"].AsamLaksa]:
                 this.imageSource = 'assets/images/food_asamlaksa.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"].RotiBakar]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"].RotiBakar]:
                 this.imageSource = 'assets/images/food_rotibakar.png';
                 break;
-            case _enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_2__["FoodName"].AyamRendang]:
+            case _enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"][_enum__WEBPACK_IMPORTED_MODULE_3__["FoodName"].AyamRendang]:
                 this.imageSource = 'assets/images/food_ayamrendang.png';
                 break;
             default:
@@ -584,6 +623,10 @@ var ItemComponent = /** @class */ (function () {
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Object)
+    ], ItemComponent.prototype, "done", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
     ], ItemComponent.prototype, "positionX", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('item'),
@@ -595,7 +638,7 @@ var ItemComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./item.component.html */ "./src/app/item/item.component.html"),
             styles: [__webpack_require__(/*! ./item.component.scss */ "./src/app/item/item.component.scss")]
         }),
-        __metadata("design:paramtypes", [_food_service__WEBPACK_IMPORTED_MODULE_3__["FoodService"]])
+        __metadata("design:paramtypes", [_food_service__WEBPACK_IMPORTED_MODULE_4__["FoodService"]])
     ], ItemComponent);
     return ItemComponent;
 }());
@@ -611,7 +654,7 @@ var ItemComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngFor=\"let item of order\">\n  <app-item [name]=\"item.name\" isStatic=\"true\"></app-item>\n  {{item.name}}\n  <br><br>\n</div>"
+module.exports = "<div *ngFor=\"let item of order\">\n  <app-item [name]=\"item.name\" [done]=\"item.done\" isStatic=\"true\">\n  </app-item>\n  {{item.name}}\n  <br><br>\n</div>"
 
 /***/ }),
 
@@ -801,6 +844,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TimerComponent", function() { return TimerComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _food_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../food.service */ "./src/app/food.service.ts");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -812,6 +856,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var TimerComponent = /** @class */ (function () {
     function TimerComponent(foodService) {
         this.foodService = foodService;
@@ -820,7 +865,8 @@ var TimerComponent = /** @class */ (function () {
         var _this = this;
         this.gameDuration = this.foodService.gameDurationInSeconds;
         this.foodService.timeKeeper(true)
-            .subscribe(function () { return _this.gameDuration--; });
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function () { return _this.gameDuration--; }))
+            .subscribe();
     };
     TimerComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
