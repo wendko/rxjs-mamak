@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h1 style=\"text-align: center\">\n  Food!\n  <small>(BETA)</small>\n</h1>\n\n<div class=\"flex-container\">\n  <div style=\"background:yellow\">\n    <app-game></app-game>\n  </div>\n  <div style=\"width:100%;background:url('assets/images/notepad.jpg');text-align:center\">\n    <app-timer></app-timer>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Score : {{foodService.score}}\n    </h2>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Orders completed {{foodService.maxOrderCount-foodService.remainingOrderCount()}} / {{foodService.maxOrderCount}}\n    </h2>\n    <div *ngIf=\"foodService.orders\">\n      <app-order [order]=\"foodService.getTopOrder()\"></app-order>\n    </div>\n  </div>\n</div>"
+module.exports = "<h1 style=\"text-align: center\">\n  Food!\n  <small>(BETA)</small>\n</h1>\n\n<div class=\"flex-container\">\n  <div>\n    <app-game></app-game>\n  </div>\n  <div style=\"width:100%;background:url('assets/images/notepad.jpg');text-align:center\">\n    <app-timer></app-timer>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Score : {{foodService.score}}\n    </h2>\n    <hr style=\"border-top: dotted 3px gray\">\n    <h2>\n      Orders completed {{foodService.maxOrderCount-foodService.remainingOrderCount()}} / {{foodService.maxOrderCount}}\n    </h2>\n    <div *ngIf=\"foodService.orders\">\n      <app-order [order]=\"foodService.getTopOrder()\"></app-order>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -222,13 +222,13 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var FoodService = /** @class */ (function () {
     function FoodService() {
-        this.gameDurationInSeconds = 15; // minimum 10 seconds
+        this.gameDurationInSeconds = 10; // minimum 10 seconds
         this.startGameDelay = 3000;
         this.maxOrderCount = 3;
         this.scoreUnit = 1;
         this.correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
         this.wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
-        this.orderLength = { max: 1, min: 1 };
+        this.orderLength = { max: 3, min: 1 };
         this.reset();
     }
     //#region time
@@ -250,7 +250,7 @@ var FoodService = /** @class */ (function () {
     //#region misc
     FoodService.prototype.reset = function () {
         this.orders = new Array(this.maxOrderCount);
-        this.gameWonSubject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"]();
+        this.gameWon$ = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"]();
         this.ordersCompletedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"]();
         this.gameWon = false;
         this.score = 0;
@@ -269,10 +269,12 @@ var FoodService = /** @class */ (function () {
         var orders = [];
         var currentOrder = [];
         var maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
+        // TODO: game logic is not correct! cannot win :(
         while (orders.length < this.orders.length) {
             var randomItem = this.randomizeItem();
             queuedItems.push(randomItem);
             if (currentOrder.length < maxCurrentOrderCount) {
+                // 20% chance of this item being in current order
                 var isMenuItem = (Math.random() * 100) < 20;
                 if (isMenuItem) {
                     currentOrder.push(randomItem);
@@ -316,7 +318,7 @@ var FoodService = /** @class */ (function () {
     FoodService.prototype.checkGameStatus = function () {
         if (this.orders.length === 0) {
             this.gameWon = true;
-            this.gameWonSubject.next(true);
+            this.gameWon$.next(true);
         }
     };
     FoodService.prototype.updateOrder = function (foundOrder) {
@@ -361,7 +363,7 @@ var FoodService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n\n  <div class=\"container\">\n    <div class=\"font-large\">\n      {{countdownText}}\n    </div>\n\n    <div *ngIf=\"this.showOrderFulfilled\" class=\"font-temporary\">\n      Extra 2 points for completed order!\n    </div>\n\n    <div *ngIf=\"showGameOver\">\n      <div *ngIf=\"!this.foodService.gameWon\" class=\"font-large\">\n        GAME OVER!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <div *ngIf=\"this.foodService.gameWon\" class=\"font-large\">\n        YOU WON!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <br>\n      <button class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full\" (click)=\"restart()\">\n        Play again\n      </button>\n    </div>\n  </div>\n</div>"
+module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n\n  <div class=\"container\">\n    <div class=\"font-large\">\n      {{countdownText}}\n    </div>\n\n    <div *ngIf=\"this.showOrderFulfilled\" class=\"font-temporary\">\n      Extra 2 points for completed order!\n    </div>\n\n    <div *ngIf=\"showGameOver\">\n      <div *ngIf=\"!this.foodService.gameWon\" class=\"font-large\">\n        GAME OVER!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <div *ngIf=\"this.foodService.gameWon\" class=\"font-large\">\n        YOU WON!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <br>\n      <button class=\"btn-replay\" (click)=\"restart()\">\n        Play again\n      </button>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -372,7 +374,7 @@ module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".font-large {\n  font-size: -webkit-xxx-large; }\n\n.font-temporary {\n  font-size: xx-large;\n  -webkit-animation: appearBriefly 2s linear;\n          animation: appearBriefly 2s linear;\n  opacity: 0; }\n\n.container {\n  margin: auto;\n  text-shadow: 2px 2px white;\n  text-align: center; }\n\n@-webkit-keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvZ2FtZS9nYW1lLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksNkJBQTRCLEVBQy9COztBQUVEO0VBQ0ksb0JBQW1CO0VBQ25CLDJDQUFrQztVQUFsQyxtQ0FBa0M7RUFDbEMsV0FBVSxFQUNiOztBQUVEO0VBQ0ksYUFBVztFQUNYLDJCQUEwQjtFQUMxQixtQkFDSixFQUFDOztBQUVEO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBOztBQUxsQjtFQUNJO0lBQ0ksV0FBVSxFQUFBO0VBRWQ7SUFDSSxXQUFVLEVBQUEsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2dhbWUvZ2FtZS5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5mb250LWxhcmdlIHtcbiAgICBmb250LXNpemU6IC13ZWJraXQteHh4LWxhcmdlO1xufVxuXG4uZm9udC10ZW1wb3Jhcnkge1xuICAgIGZvbnQtc2l6ZTogeHgtbGFyZ2U7XG4gICAgYW5pbWF0aW9uOiBhcHBlYXJCcmllZmx5IDJzIGxpbmVhcjtcbiAgICBvcGFjaXR5OiAwO1xufVxuXG4uY29udGFpbmVyIHtcbiAgICBtYXJnaW46YXV0bztcbiAgICB0ZXh0LXNoYWRvdzogMnB4IDJweCB3aGl0ZTtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXJcbn1cblxuQGtleWZyYW1lcyBhcHBlYXJCcmllZmx5IHtcbiAgICAxMCUsOTAlIHtcbiAgICAgICAgb3BhY2l0eTogMTtcbiAgICB9XG4gICAgMTAwJSB7XG4gICAgICAgIG9wYWNpdHk6IDA7XG4gICAgfVxufSJdfQ== */"
+module.exports = ".font-large {\n  font-size: -webkit-xxx-large; }\n\n.font-temporary {\n  font-size: xx-large;\n  -webkit-animation: appearBriefly 2s linear;\n          animation: appearBriefly 2s linear;\n  opacity: 0; }\n\n.container {\n  margin: auto;\n  text-shadow: 2px 2px white;\n  text-align: center; }\n\n@-webkit-keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes appearBriefly {\n  10%, 90% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.btn-replay {\n  padding: 20px 30px;\n  border-radius: 100px;\n  font-size: larger;\n  transition: all 0.2s ease-in;\n  border: solid 1px blueviolet; }\n\n.btn-replay:hover {\n  box-shadow: 5px 5px 0px blueviolet; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy93ZW5keWtvbmcvRG9jdW1lbnRzL3NpZGUvcnhqcy1wbGF5Z3JvdW5kL3NyYy9hcHAvZ2FtZS9nYW1lLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksNkJBQTRCLEVBQy9COztBQUVEO0VBQ0ksb0JBQW1CO0VBQ25CLDJDQUFrQztVQUFsQyxtQ0FBa0M7RUFDbEMsV0FBVSxFQUNiOztBQUVEO0VBQ0ksYUFBVztFQUNYLDJCQUEwQjtFQUMxQixtQkFDSixFQUFDOztBQUVEO0VBQ0k7SUFDSSxXQUFVLEVBQUE7RUFFZDtJQUNJLFdBQVUsRUFBQSxFQUFBOztBQUxsQjtFQUNJO0lBQ0ksV0FBVSxFQUFBO0VBRWQ7SUFDSSxXQUFVLEVBQUEsRUFBQTs7QUFJbEI7RUFDSSxtQkFBa0I7RUFDbEIscUJBQW9CO0VBQ3BCLGtCQUFpQjtFQUNqQiw2QkFBNEI7RUFDNUIsNkJBQTRCLEVBQy9COztBQUVEO0VBQ0ksbUNBQWtDLEVBQ3JDIiwiZmlsZSI6InNyYy9hcHAvZ2FtZS9nYW1lLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmZvbnQtbGFyZ2Uge1xuICAgIGZvbnQtc2l6ZTogLXdlYmtpdC14eHgtbGFyZ2U7XG59XG5cbi5mb250LXRlbXBvcmFyeSB7XG4gICAgZm9udC1zaXplOiB4eC1sYXJnZTtcbiAgICBhbmltYXRpb246IGFwcGVhckJyaWVmbHkgMnMgbGluZWFyO1xuICAgIG9wYWNpdHk6IDA7XG59XG5cbi5jb250YWluZXIge1xuICAgIG1hcmdpbjphdXRvO1xuICAgIHRleHQtc2hhZG93OiAycHggMnB4IHdoaXRlO1xuICAgIHRleHQtYWxpZ246IGNlbnRlclxufVxuXG5Aa2V5ZnJhbWVzIGFwcGVhckJyaWVmbHkge1xuICAgIDEwJSw5MCUge1xuICAgICAgICBvcGFjaXR5OiAxO1xuICAgIH1cbiAgICAxMDAlIHtcbiAgICAgICAgb3BhY2l0eTogMDtcbiAgICB9XG59XG5cbi5idG4tcmVwbGF5IHtcbiAgICBwYWRkaW5nOiAyMHB4IDMwcHg7XG4gICAgYm9yZGVyLXJhZGl1czogMTAwcHg7XG4gICAgZm9udC1zaXplOiBsYXJnZXI7XG4gICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZS1pbjtcbiAgICBib3JkZXI6IHNvbGlkIDFweCBibHVldmlvbGV0O1xufVxuXG4uYnRuLXJlcGxheTpob3ZlciB7XG4gICAgYm94LXNoYWRvdzogNXB4IDVweCAwcHggYmx1ZXZpb2xldDtcbn0iXX0= */"
 
 /***/ }),
 
@@ -426,18 +428,18 @@ var GameComponent = /** @class */ (function () {
     GameComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.queuedItems = this.foodService.prepareItemsAndOrder();
-        var singleOrderFulfilled = this.foodService.ordersCompletedSubject.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (x) { return _this.showOrderFulfilled = true; }));
-        var spawningObservable = this.foodService.timeKeeper(true).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(this.spawnItem.bind(this)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.timeRunsOut()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.gameWonSubject), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () {
+        var singleOrderFulfilled$ = this.foodService.ordersCompletedSubject.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (x) { return _this.showOrderFulfilled = true; }));
+        var spawning$ = this.foodService.timeKeeper(true).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(this.spawnItem.bind(this)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.timeRunsOut()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.foodService.gameWon$), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () {
             _this.showGameOver = true;
             _this.items = [];
         }));
-        var gameReadyObservable = this.foodService.timeKeeper()
+        var gameReady$ = this.foodService.timeKeeper()
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (x) {
             _this.countdownText = !x ? 'Ready?' : 'Go!';
         }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])(this.foodService.startGameDelay)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () { _this.countdownText = ''; }));
-        singleOrderFulfilled.subscribe();
-        spawningObservable.subscribe();
-        gameReadyObservable.subscribe();
+        singleOrderFulfilled$.subscribe();
+        spawning$.subscribe();
+        gameReady$.subscribe();
     };
     GameComponent.prototype.spawnItem = function () {
         var positionX = this.foodService.randomizeIndex(this.maxWidth);
@@ -865,7 +867,7 @@ var TimerComponent = /** @class */ (function () {
         var _this = this;
         this.gameDuration = this.foodService.gameDurationInSeconds;
         this.foodService.timeKeeper(true)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function () { return _this.gameDuration--; }))
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function () { return _this.gameDuration--; }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["finalize"])(function () { return _this.gameDuration = -1; }))
             .subscribe();
     };
     TimerComponent = __decorate([

@@ -13,7 +13,7 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 15; // minimum 10 seconds
+  public gameDurationInSeconds = 10; // minimum 10 seconds
   public startGameDelay = 3000;
   public maxOrderCount = 3;
   public scoreUnit = 1;

@@ -58,7 +58,7 @@ export class GameComponent implements OnInit {
   }
 
   spawnItem(): void {
-    const positionX = this.foodService.randomizeIndex(this.maxWidth - 50) + 50;
+    const positionX = this.foodService.randomizeIndex(this.maxWidth);
     const queuedItem = this.queuedItems.pop();
     if (!queuedItem) {
       return;
