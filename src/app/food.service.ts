@@ -13,9 +13,9 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 10; // minimum 10 seconds
+  public gameDurationInSeconds = 120; // minimum 10 seconds
   public startGameDelay = 3000;
-  public maxOrderCount = 3;
+  public maxOrderCount = 2;
   public scoreUnit = 1;
 
   public score: number;
@@ -81,7 +81,9 @@ export class FoodService {
     let maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
 
     // TODO: game logic is not correct! cannot win :(
-    while (orders.length < this.orders.length) {
+    const continueSpawning = () => (orders.length < this.orders.length);
+
+    while (continueSpawning()) {
       const randomItem: Item = this.randomizeItem();
       queuedItems.push(randomItem);
 

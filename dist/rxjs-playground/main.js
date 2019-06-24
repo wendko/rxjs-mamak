@@ -222,9 +222,9 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var FoodService = /** @class */ (function () {
     function FoodService() {
-        this.gameDurationInSeconds = 10; // minimum 10 seconds
+        this.gameDurationInSeconds = 120; // minimum 10 seconds
         this.startGameDelay = 3000;
-        this.maxOrderCount = 3;
+        this.maxOrderCount = 2;
         this.scoreUnit = 1;
         this.correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
         this.wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
@@ -265,12 +265,14 @@ var FoodService = /** @class */ (function () {
     //#endregion
     //#region items
     FoodService.prototype.prepareItemsAndOrder = function () {
+        var _this = this;
         var queuedItems = [];
         var orders = [];
         var currentOrder = [];
         var maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
         // TODO: game logic is not correct! cannot win :(
-        while (orders.length < this.orders.length) {
+        var continueSpawning = function () { return (orders.length < _this.orders.length); };
+        while (continueSpawning()) {
             var randomItem = this.randomizeItem();
             queuedItems.push(randomItem);
             if (currentOrder.length < maxCurrentOrderCount) {
@@ -363,7 +365,7 @@ var FoodService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div\n  style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n\n  <div class=\"container\">\n    <div class=\"font-large\">\n      {{countdownText}}\n    </div>\n\n    <div *ngIf=\"this.showOrderFulfilled\" class=\"font-temporary\">\n      Extra 2 points for completed order!\n    </div>\n\n    <div *ngIf=\"showGameOver\">\n      <div *ngIf=\"!this.foodService.gameWon\" class=\"font-large\">\n        GAME OVER!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <div *ngIf=\"this.foodService.gameWon\" class=\"font-large\">\n        YOU WON!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <br>\n      <button class=\"btn-replay\" (click)=\"restart()\">\n        Play again\n      </button>\n    </div>\n  </div>\n</div>"
+module.exports = "<div style=\"height:90vh;width:80vw;display:flex;flex-direction:row\">\n  <!-- style=\"background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row\"> -->\n  <div *ngFor=\"let item of items\">\n    <app-item style=\"position:fixed;transition:all 0.5s linear\" [name]=\"item.name\" [type]=\"item.type\"\n      [positionX]=\"item.positionX\">\n    </app-item>\n  </div>\n\n  <div class=\"container\">\n    <div class=\"font-large\">\n      {{countdownText}}\n    </div>\n\n    <div *ngIf=\"this.showOrderFulfilled\" class=\"font-temporary\">\n      Extra 2 points for completed order!\n    </div>\n\n    <div *ngIf=\"showGameOver\">\n      <div *ngIf=\"!this.foodService.gameWon\" class=\"font-large\">\n        GAME OVER!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <div *ngIf=\"this.foodService.gameWon\" class=\"font-large\">\n        YOU WON!\n        <br>\n        Your score is {{foodService.score}}.\n      </div>\n      <br>\n      <button class=\"btn-replay\" (click)=\"restart()\">\n        Play again\n      </button>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
