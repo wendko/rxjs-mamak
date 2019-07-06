@@ -13,9 +13,9 @@ interface Item {
   providedIn: 'root'
 })
 export class FoodService {
-  public gameDurationInSeconds = 120; // minimum 10 seconds
+  public gameDurationInSeconds = 20;
   public startGameDelay = 3000;
-  public maxOrderCount = 2;
+  public maxOrderCount;
   public scoreUnit = 1;
 
   public score: number;
@@ -27,11 +27,12 @@ export class FoodService {
 
   private correctTexts = ['Cool!', 'Awesome!', 'Yay!'];
   private wrongTexts = ['Nooo!', 'Try Again!', 'Nope!'];
-  private orderLength = { max: 3, min: 1 };
+  private orderLength = { max: 3, min: 2 };
 
 
   constructor() {
     this.reset();
+    this.maxOrderCount = this.randomizeIndex(2, 2);
   }
 
   //#region time
@@ -62,8 +63,8 @@ export class FoodService {
     this.score = 0;
   }
 
-  randomizeIndex(maxValue: number): number {
-    return Math.floor(Math.random() * Math.floor(maxValue));
+  randomizeIndex(offset: number, minValue: number = 0): number {
+    return Math.floor(Math.random() * offset) + minValue;
   }
 
   getItemClickedText(isCorrect: boolean) {
@@ -75,34 +76,46 @@ export class FoodService {
   //#region items
   public prepareItemsAndOrder(): Item[] {
     const queuedItems: Item[] = [];
-    const orders = [];
+    let queuedOrders = [];
 
-    let currentOrder = [];
-    let maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
-
-    // TODO: game logic is not correct! cannot win :(
-    const continueSpawning = () => (orders.length < this.orders.length);
-
-    while (continueSpawning()) {
+    while (queuedItems.length < this.gameDurationInSeconds) {
       const randomItem: Item = this.randomizeItem();
       queuedItems.push(randomItem);
-
-      if (currentOrder.length < maxCurrentOrderCount) {
-        // 20% chance of this item being in current order
-        const isMenuItem = (Math.random() * 100) < 20;
-        if (isMenuItem) {
-          currentOrder.push(randomItem);
-        }
-      } else {
-        orders.push(currentOrder);
-        currentOrder = [];
-        maxCurrentOrderCount = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
-      }
     }
 
-    this.orders = orders;
+    if (this.maxOrderCount === 2) {
+      const partitionLength = (this.gameDurationInSeconds / 2);
+      const arr1 = queuedItems.slice(0, partitionLength);
+      const arr2 = queuedItems.slice(partitionLength);
+      queuedOrders = this.pluckOrderItems(arr1, arr2);
+    } else {
+      const partitionLength = Math.floor(this.gameDurationInSeconds / 3);
+      const arr1 = queuedItems.slice(0, partitionLength);
+      const arr2 = queuedItems.slice(partitionLength, partitionLength * 2);
+      const arr3 = queuedItems.slice(partitionLength * 2, this.gameDurationInSeconds);
+      queuedOrders = this.pluckOrderItems(arr1, arr2, arr3);
+    }
+    this.orders = queuedOrders;
+    return queuedItems.reverse();
+  }
 
-    return queuedItems;
+  // for each in partition, randomly pick x number of items and insert in this.orders
+  private pluckOrderItems(...arrays) {
+    const orderItemsList = [];
+
+    for (const array of arrays) {
+      const orderItems = [];
+      const orderSize = this.getRandomOrderCount(this.orderLength.min, this.orderLength.max);
+      const samples = array.slice();
+
+      while (orderItems.length < orderSize) {
+        const itemIndex = this.randomizeIndex(samples.length);
+        const [item] = samples.splice(itemIndex, 1);
+        orderItems.push(item);
+      }
+      orderItemsList.push(orderItems);
+    }
+    return orderItemsList;
   }
 
   private randomizeItem(): { type, name, done } {
@@ -164,7 +177,7 @@ export class FoodService {
   }
 
   public getRandomOrderCount(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
   //#endregion
 
