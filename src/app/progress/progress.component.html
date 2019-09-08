@@ -1,0 +1,19 @@
+<div class="progress-container">
+    <div class="timer">
+        <div>
+            Timer
+        </div>
+        <span *ngIf="(gameOverText$ | async) as gameOverText; else countDown">
+            {{gameOverText}}
+        </span>
+        <ng-template #countDown>
+            {{countDown$ | async}}
+        </ng-template>
+    </div>
+    <div class="orders">
+        Orders
+    </div>
+    <div class="current-order">
+        Current order
+    </div>
+</div>

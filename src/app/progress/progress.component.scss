@@ -1,0 +1,8 @@
+.progress-container {
+    display: grid;
+    grid-auto-flow: column;
+    >* {
+        outline: 1px dashed green;
+        text-align: center;
+    }
+}

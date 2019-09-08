@@ -1,8 +1,23 @@
-.flex-container {
-  display: flex;
-  align-items: stretch;
-}
+@import url('https://fonts.googleapis.com/css?family=Pangolin&display=swap');
 
 * {
-  font-family: 'Fredoka One', cursive
+    outline: 1px dashed red;
+    font-family: 'Pangolin', cursive;
+}
+
+.game-container {
+    display: grid;
+    height: 90vh;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr 5fr;
+    border: 2px solid orange;
+    border-radius: 10px;
+}
+
+.title, .footer {
+    text-align: center;
+}
+
+.footer {
+    margin-top: 10px;
 }

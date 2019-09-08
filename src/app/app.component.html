@@ -1,23 +1,10 @@
-<h1 style="text-align: center">
-  RxJS Mamak
-</h1>
-
-<div class="flex-container">
-  <div>
-    <app-game></app-game>
-  </div>
-  <div style="width:100%;background:url('assets/images/notepad.jpg');text-align:center">
-    <app-timer></app-timer>
-    <hr style="border-top: dotted 3px gray">
-    <h2>
-      Score : {{foodService.score}}
-    </h2>
-    <hr style="border-top: dotted 3px gray">
-    <h2>
-      Orders completed {{foodService.maxOrderCount-foodService.remainingOrderCount()}} / {{foodService.maxOrderCount}}
-    </h2>
-    <div *ngIf="foodService.orders">
-      <app-order [order]="foodService.getTopOrder()"></app-order>
+<div class="game-container">
+    <h1 class="title"> RxJS Mamak </h1>
+    <app-progress class="progress"></app-progress>
+    <div class="game">
+        Game here
     </div>
-  </div>
+</div>
+<div class="footer">
+    Made with love with Angular and RxJS
 </div>
