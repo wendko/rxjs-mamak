@@ -1,5 +1,7 @@
-<div *ngIf="(gameStatus$ | async) as gameStatus">
+<div *ngIf="(gameService.gameStatus$ | async) as gameStatus">
     {{gameStatus}}
+    <!-- {{itemSpawn$ | async}} -->
+    {{(gameService.orderList$ | async) | json}}
     <div *ngIf="gameStatus === 'New'">
         <ng-container *ngTemplateOutlet="instructions"></ng-container>
     </div>

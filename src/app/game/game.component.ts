@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GameService } from "../game.service";
 
 @Component({
@@ -6,10 +6,14 @@ import { GameService } from "../game.service";
     templateUrl: 'game.component.html',
     styleUrls: ['game.component.scss']
 })
-export class GameComponent {
-    gameStatus$ = this.gameService.gameStatus$;
+export class GameComponent implements OnInit {
+    itemSpawn$ = this.gameService.itemSpawn$;
 
     constructor(private gameService: GameService) { }
+
+    ngOnInit() {
+        this.gameService.prepOrders$.subscribe();
+    }
 
     startGame() {
         this.gameService.gameStatus.next('Start');

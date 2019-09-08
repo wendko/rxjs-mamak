@@ -15,10 +15,14 @@
             </span>
         </div>
     </div>
-    <div class="orders">
-        Orders
-    </div>
-    <div class="current-order">
-        Current order
+    <div class="orders" *ngIf="(gameService.orderList$ | async) as prepOrders">
+        <div class="order-count">
+            <div>Orders</div>
+            <div>{{prepOrders.length}}</div>
+        </div>
+        <div class="current-order">
+            <div>Current order</div>
+            <div>{{prepOrders[0]}}</div>
+        </div>
     </div>
 </div>

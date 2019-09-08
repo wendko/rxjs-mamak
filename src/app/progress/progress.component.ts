@@ -10,6 +10,8 @@ import { GameService } from "../game.service";
 export class ProgressComponent {
     countDown$ = this.gameService.countDown$;
     gameStatus$ = this.gameService.gameStatus$;
+    // prepOrders$ = this.gameService.prepOrders$;
+
 
     constructor(private gameService: GameService) { }
 }
