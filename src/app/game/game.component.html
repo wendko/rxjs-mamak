@@ -1,0 +1,17 @@
+<div *ngIf="(gameStarted$ | async); else instructions">
+    Game in progress!
+</div>
+
+<ng-template #instructions>
+    <div class="instructions">
+        <div>
+            <h2>Instructions</h2>
+            Complete the orders within the time frame! 
+        </div>
+        <div>
+            <button type="button" class="btn-start" (click)="startGame()">
+                Start Game
+            </button>
+        </div>
+    </div>
+</ng-template>

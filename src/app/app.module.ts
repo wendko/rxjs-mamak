@@ -4,9 +4,11 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { GameService } from './game.service';
 import { ProgressComponent } from './progress/progress.component';
+import { GameComponent } from './game/game.component';
 
 const COMPONENTS = [
-    ProgressComponent
+    ProgressComponent,
+    GameComponent
 ];
 
 @NgModule({

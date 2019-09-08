@@ -1,0 +1,24 @@
+.instructions {
+    text-align: center;
+    outline: 1px dashed blue;
+    & > * {
+        $py: 15px;
+        padding: $py 0px $py 0px;
+    }
+}
+
+.btn-start {
+    $c-dark: purple;
+    $c-light: #fd00fd;
+
+    border-radius: 50px;
+    border: 2px solid $c-dark;
+    padding: 10px;
+    font-family: 'Pangolin', cursive;
+    &:hover{
+        box-shadow: 5px 5px $c-light;
+    }
+    &:active {
+        box-shadow: 3px 3px $c-light;
+    }
+}

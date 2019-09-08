@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
-import { interval, timer } from "rxjs";
-import { delay, map, takeUntil } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { GameService } from "../game.service";
 
 @Component({
@@ -12,6 +11,7 @@ export class ProgressComponent {
     gameOverText$ = this.gameService.gameOver$
         .pipe(map(_ => this.gameService.gameOverText));
     countDown$ = this.gameService.countDown$;
+    gameStarted$ = this.gameService.gameStarted$;
 
     constructor(private gameService: GameService) { }
 }

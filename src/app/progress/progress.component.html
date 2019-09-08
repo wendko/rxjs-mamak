@@ -3,12 +3,14 @@
         <div>
             Timer
         </div>
-        <span *ngIf="(gameOverText$ | async) as gameOverText; else countDown">
-            {{gameOverText}}
-        </span>
-        <ng-template #countDown>
-            {{countDown$ | async}}
-        </ng-template>
+        <div *ngIf="gameStarted$ | async">
+            <span *ngIf="(gameOverText$ | async) as gameOverText; else countDown">
+                {{gameOverText}}
+            </span>
+            <ng-template #countDown>
+                {{countDown$ | async}}
+            </ng-template>
+        </div>
     </div>
     <div class="orders">
         Orders

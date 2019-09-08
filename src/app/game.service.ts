@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { timer, interval } from "rxjs";
+import { timer, interval, Subject } from "rxjs";
 import { map, takeUntil, delay } from "rxjs/operators";
 
 @Injectable()
@@ -16,5 +16,8 @@ export class GameService {
             map(time => (this.gameDuration / 1000) - time),
             takeUntil(this.gameOver$),
         )
+
+    gameStarted = new Subject<Boolean>();
+    gameStarted$ = this.gameStarted.asObservable();
 
 }
