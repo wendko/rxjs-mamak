@@ -7,10 +7,7 @@
     }
 }
 
-.btn-start {
-    $c-dark: purple;
-    $c-light: #fd00fd;
-
+@mixin btn($c-light, $c-dark) {
     border-radius: 50px;
     border: 2px solid $c-dark;
     padding: 10px;
@@ -21,4 +18,23 @@
     &:active {
         box-shadow: 3px 3px $c-light;
     }
+}
+
+.btn-start {
+    $c-dark: purple;
+    $c-light: #fd00fd;
+    @include btn($c-light, $c-dark);
+}
+
+.btn-home {
+    $c-dark: #d66a04;
+    $c-light: #f6a151;
+    @include btn($c-light, $c-dark);
+}
+
+.btn-replay {
+    $c-dark: #0435d8;
+    $c-light: #7797ff;
+    @include btn($c-light, $c-dark);
+    margin-right: 15px;
 }

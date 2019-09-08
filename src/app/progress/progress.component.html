@@ -3,13 +3,16 @@
         <div>
             Timer
         </div>
-        <div *ngIf="gameStarted$ | async">
-            <span *ngIf="(gameOverText$ | async) as gameOverText; else countDown">
-                {{gameOverText}}
+        <div *ngIf="(gameStatus$ | async) as gameStatus">
+            <span *ngIf="gameStatus === 'End'">
+                {{gameService.gameOverText}}
             </span>
-            <ng-template #countDown>
+            <span *ngIf="gameStatus === 'Start'">
                 {{countDown$ | async}}
-            </ng-template>
+            </span>
+            <span *ngIf="gameStatus === 'New'">
+                {{gameService.gameDuration / 1000}}
+            </span>
         </div>
     </div>
     <div class="orders">

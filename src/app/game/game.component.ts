@@ -7,11 +7,16 @@ import { GameService } from "../game.service";
     styleUrls: ['game.component.scss']
 })
 export class GameComponent {
-    gameStarted$ = this.gameService.gameStarted$;
+    gameStatus$ = this.gameService.gameStatus$;
 
     constructor(private gameService: GameService) { }
 
     startGame() {
-        this.gameService.gameStarted.next(true);
+        this.gameService.gameStatus.next('Start');
     }
+
+    newGame() {
+        this.gameService.gameStatus.next('New');
+    }
+
 }

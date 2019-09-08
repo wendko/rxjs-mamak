@@ -8,10 +8,8 @@ import { GameService } from "../game.service";
     styleUrls: ['progress.component.scss']
 })
 export class ProgressComponent {
-    gameOverText$ = this.gameService.gameOver$
-        .pipe(map(_ => this.gameService.gameOverText));
     countDown$ = this.gameService.countDown$;
-    gameStarted$ = this.gameService.gameStarted$;
+    gameStatus$ = this.gameService.gameStatus$;
 
     constructor(private gameService: GameService) { }
 }

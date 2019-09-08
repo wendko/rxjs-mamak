@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { timer, interval, Subject } from "rxjs";
-import { map, takeUntil, delay } from "rxjs/operators";
+import { timer, interval, Subject, BehaviorSubject } from "rxjs";
+import { map, takeUntil, delay, tap } from "rxjs/operators";
+import { GameStatus } from "./game";
 
 @Injectable()
 export class GameService {
@@ -9,7 +10,10 @@ export class GameService {
     gameInterval = 1000;
 
     gameOver$ = timer(this.gameDuration)
-        .pipe(delay(1000));
+        .pipe(
+            delay(1000),
+            tap(() => this.gameStatus.next('End'))
+        );
 
     countDown$ = interval(this.gameInterval)
         .pipe(
@@ -17,7 +21,7 @@ export class GameService {
             takeUntil(this.gameOver$),
         )
 
-    gameStarted = new Subject<Boolean>();
-    gameStarted$ = this.gameStarted.asObservable();
+    gameStatus = new BehaviorSubject<GameStatus>('End');
+    gameStatus$ = this.gameStatus.asObservable();
 
 }

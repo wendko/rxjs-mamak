@@ -1,0 +1,1 @@
+export type GameStatus = 'Start' | 'End' | 'New';
