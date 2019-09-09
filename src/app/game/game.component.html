@@ -1,6 +1,5 @@
 <div *ngIf="(gameService.gameStatus$ | async) as gameStatus">
     <div>Game status: {{gameStatus}}</div>
-    <div>Spawned items: {{gameService.itemSpawn$ | async}}</div>
     <div>Total orders: {{(gameService.orderList$ | async) | json}}</div>
     <div *ngIf="gameStatus === 'New'">
         <ng-container *ngTemplateOutlet="instructions"></ng-container>
@@ -10,14 +9,19 @@
     </div>
     <div *ngIf="gameStatus === 'Start'">
         <button (click)="nextOrder()">Next order</button>
-        <ng-container *ngTemplateOutlet="gameStart"></ng-container>
+        <ng-container [ngTemplateOutlet]="gameStart" 
+            [ngTemplateOutletContext]="{$implicit: gameService.itemSpawn$ | async}">
+        </ng-container>
     </div>
 </div>
 
-<ng-template #gameStart>
+<ng-template #gameStart let-items>
     <div class="game-area">
         <div class="points">
             Points collector
+        </div>
+        <div *ngFor="let item of items">
+            {{item}}
         </div>
     </div>
 </ng-template>
@@ -29,7 +33,7 @@
             {{ 1 + 1}}
         </div>
         <div>
-            <button type="button" class="btn-replay mr-2" (click)="startGame()">
+            <button type="button" class="btn-replay mr-2" (click)="startGame()" disabled>
                 Play again?
             </button>
             <button type="button" class="btn-home" (click)="newGame()">
