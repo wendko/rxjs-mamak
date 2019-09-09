@@ -1,26 +1,26 @@
 <div class="progress-container">
     <div class="timer">
-        <div *ngIf="(gameStatus$ | async) as gameStatus">
+        <div *ngIf="(gameService.gameStatus$ | async) as gameStatus">
             <span *ngIf="gameStatus === 'End'">
                 Game Over!
             </span>
             <span *ngIf="gameStatus === 'Start'">
                 <div>Timer</div>
-                {{countDown$ | async}}
+                {{gameService.countDown$ | async}}
             </span>
             <span *ngIf="gameStatus === 'New'">
                 Are you hungry?
             </span>
         </div>
     </div>
-    <div class="orders" *ngIf="(gameService.orderList$ | async) as prepOrders">
+    <div class="orders" *ngIf="(gameService.orderList$ | async) as orderList">
         <div class="order-count">
             <div>Orders</div>
-            <div>{{prepOrders.length}}</div>
+            <div>{{orderList.length}}</div>
         </div>
         <div class="current-order">
             <div>Current order</div>
-            <div>{{prepOrders[0]}}</div>
+            <div>{{orderList[0]}}</div>
         </div>
     </div>
 </div>

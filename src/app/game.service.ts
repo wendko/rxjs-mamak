@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, interval, timer, ReplaySubject, EMPTY, merge } from "rxjs";
-import { delay, filter, map, takeUntil, tap, mergeMap, concatMap, take } from "rxjs/operators";
+import { BehaviorSubject, combineLatest, EMPTY, interval, ReplaySubject, timer } from "rxjs";
+import { concatMap, delay, filter, finalize, map, take, takeUntil, tap } from "rxjs/operators";
 import { GameStatus } from "./game";
 import { Drink, Food } from "./item";
 
@@ -21,6 +21,7 @@ export class GameService {
             takeUntil(this.gameOver$),
         )
 
+
     /** Status */
     gameStatus = new BehaviorSubject<GameStatus>('End');
     gameStatus$ = this.gameStatus.asObservable();
@@ -28,37 +29,48 @@ export class GameService {
     /** Orders */
     secondsPerSingleOrder = 2;
     itemsPerSingleOrder = 3;
-    itemSpawnSize = 4;
+    itemSpawnExtra = 2;
     orderCount = Math.floor(this.gameDuration / 1000 / this.secondsPerSingleOrder);
     totalItems: (Food | Drink)[] = [...Object.values(Drink), ...Object.values(Food)];
-    currentOrder$ = new BehaviorSubject<number>(0);
-    currentOrderObs$ = this.currentOrder$.asObservable();
-    orderList$ = new ReplaySubject<(Food | Drink)[][]>();
+    currentOrder = new BehaviorSubject<number>(0);
+    currentOrder$ = this.currentOrder.asObservable();
+    orderList = new ReplaySubject<(Food | Drink)[][]>();
+    orderList$ = this.orderList.asObservable();
     prepOrders$ = this.gameStatus$.pipe(
         filter((x: GameStatus) => x === 'Start'),
         map(_ => {
             const orders = Array.from({ length: this.orderCount },
                 _ => this.getRandomItems(this.itemsPerSingleOrder));
-            this.orderList$.next(orders);
+            this.orderList.next(orders);
             return EMPTY;
         })
     );
-    itemSpawn$ = this.orderList$
-        .pipe(
-            mergeMap(orders => merge(orders, this.currentOrderObs$)),
-            tap((result) => {
-                console.log(`current order is ${JSON.stringify(result)}`);
+
+    itemSpawn$ =
+        combineLatest(
+            this.orderList$,
+            this.currentOrder$
+        ).pipe(
+            tap(([orderList, currentOrderIndex]) => {
+                console.log('in itemSpawn$ -----------')
+                console.log(`${orderList} ${currentOrderIndex}`);
             }),
-            concatMap((currentOrder: (Food | Drink)[], currentOrderIndex: number) =>
-                currentOrderIndex < this.orderCount ?
-                    interval(this.spawnInterval).pipe(
-                        take(currentOrder.length),
-                        map(index => [
-                            currentOrder[index],
-                            ...this.getRandomItems(this.itemSpawnSize)
-                        ])
-                    ) : EMPTY
+            filter(([orderList, currentOrderIndex]) =>
+                currentOrderIndex < this.orderCount
+                && Boolean(orderList[currentOrderIndex])
             ),
+            concatMap(([orderList, currentOrderIndex]) => {
+                const currentOrderList = orderList[currentOrderIndex];
+
+                return interval(this.spawnInterval).pipe(
+                    take(currentOrderList.length),
+                    map(index => [
+                        currentOrderList[index],
+                        ...this.getRandomItems(this.itemSpawnExtra)
+                    ]),
+                    finalize(() => this.currentOrder.next(currentOrderIndex + 1))
+                );
+            })
         );
 
     getRandomItems(itemCount: number): (Food | Drink)[] {

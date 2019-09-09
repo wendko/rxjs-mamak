@@ -1,17 +1,12 @@
-import { Component } from "@angular/core";
-import { map } from "rxjs/operators";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { GameService } from "../game.service";
 
 @Component({
     selector: 'app-progress',
     templateUrl: 'progress.component.html',
-    styleUrls: ['progress.component.scss']
+    styleUrls: ['progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProgressComponent {
-    countDown$ = this.gameService.countDown$;
-    gameStatus$ = this.gameService.gameStatus$;
-    // prepOrders$ = this.gameService.prepOrders$;
-
-
-    constructor(private gameService: GameService) { }
+    constructor(public gameService: GameService) { }
 }
