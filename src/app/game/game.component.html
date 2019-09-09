@@ -1,14 +1,26 @@
 <div *ngIf="(gameService.gameStatus$ | async) as gameStatus">
-    {{gameStatus}}
-    <!-- {{itemSpawn$ | async}} -->
-    {{(gameService.orderList$ | async) | json}}
+    <div>Game status: {{gameStatus}}</div>
+    <div>Spawned items: {{gameService.itemSpawn$ | async}}</div>
+    <div>Total orders: {{(gameService.orderList$ | async) | json}}</div>
     <div *ngIf="gameStatus === 'New'">
         <ng-container *ngTemplateOutlet="instructions"></ng-container>
     </div>
     <div *ngIf="gameStatus === 'End'">
         <ng-container *ngTemplateOutlet="gameEnd"></ng-container>
     </div>
+    <div *ngIf="gameStatus === 'Start'">
+        <button (click)="nextOrder()">Next order</button>
+        <ng-container *ngTemplateOutlet="gameStart"></ng-container>
+    </div>
 </div>
+
+<ng-template #gameStart>
+    <div class="game-area">
+        <div class="points">
+            Points collector
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #gameEnd>
     <div class="instructions">

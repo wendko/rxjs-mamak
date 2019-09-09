@@ -7,6 +7,15 @@
     }
 }
 
+.game-area {
+    display: grid;
+    place-items: center;
+}
+
+.points {
+    margin-top: 50px;
+}
+
 @mixin btn($c-light, $c-dark) {
     border-radius: 50px;
     border: 2px solid $c-dark;

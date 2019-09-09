@@ -1,17 +1,15 @@
 <div class="progress-container">
     <div class="timer">
-        <div>
-            Timer
-        </div>
         <div *ngIf="(gameStatus$ | async) as gameStatus">
             <span *ngIf="gameStatus === 'End'">
-                {{gameService.gameOverText}}
+                Game Over!
             </span>
             <span *ngIf="gameStatus === 'Start'">
+                <div>Timer</div>
                 {{countDown$ | async}}
             </span>
             <span *ngIf="gameStatus === 'New'">
-                {{gameService.gameDuration / 1000}}
+                Are you hungry?
             </span>
         </div>
     </div>

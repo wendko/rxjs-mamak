@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { merge } from "rxjs";
 import { GameService } from "../game.service";
 
 @Component({
@@ -7,20 +8,29 @@ import { GameService } from "../game.service";
     styleUrls: ['game.component.scss']
 })
 export class GameComponent implements OnInit {
-    itemSpawn$ = this.gameService.itemSpawn$;
-
     constructor(private gameService: GameService) { }
 
     ngOnInit() {
         this.gameService.prepOrders$.subscribe();
     }
 
-    startGame() {
+    startGame(): void {
         this.gameService.gameStatus.next('Start');
     }
 
-    newGame() {
+    newGame(): void {
         this.gameService.gameStatus.next('New');
+        this.gameService.currentOrder$.next(0);
     }
 
+    // temp
+    ordersCompleted = 0;
+    nextOrder(): void {
+        if (this.ordersCompleted < this.gameService.orderCount) {
+            this.gameService.currentOrder$.next(this.ordersCompleted + 1);
+            this.ordersCompleted++;
+        } else {
+            console.log('all done!');
+        }
+    }
 }
