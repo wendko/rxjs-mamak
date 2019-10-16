@@ -1,28 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { FoodService } from '../food.service';
-import { tap, finalize, takeUntil } from 'rxjs/operators';
+import { tap, finalize, takeUntil, map } from 'rxjs/operators';
+import { Time } from '@angular/common';
+import { TimeService } from '../time.service';
+import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-timer',
-  templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.scss']
+    selector: 'app-timer',
+    templateUrl: './timer.component.html',
+    styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent implements OnInit {
-  gameDuration: number;
+    gameDuration: number;
 
-  constructor(private foodService: FoodService) {
-  }
+    constructor(
+        private timeService: TimeService,
+        private foodService: FoodService
+    ) { }
 
-  ngOnInit() {
-    this.gameDuration = this.foodService.gameDurationInSeconds;
-    this.foodService.timeKeeper(true)
-      .pipe(
-        tap(() => this.gameDuration--),
-        takeUntil(this.foodService.timeRunsOut()),
-        takeUntil(this.foodService.gameWon$),
-        finalize(() => this.gameDuration = -1)
-      )
-      .subscribe();
-  }
+
+    timeIsUp$ = new Subject<string>();
+
+
+    showTimeIsUp: boolean;
+    showTimesUpMsg$ = this.timeIsUp$.pipe(tap(_ => this.showTimeIsUp = true));
+    time$ = this.timeService.gameTimer$.pipe(
+        map(val => (this.timeService.gameEnds / 1000) - val), // reverse shown
+        finalize(() => this.timeIsUp$.next())
+    );
+
+    ngOnInit() {
+        this.showTimesUpMsg$.subscribe();
+    }
 
 }
