@@ -1,7 +1,15 @@
+@import '../shared.scss';
+
 .timer-text {
-    font-size: 25px;
+    @include sidebarText;
 }
 
 .timer-title {
-    font-size: 30px;
+    @include sidebarTitle;
+    margin-bottom: 10px;
+}
+
+.timer-container {
+    display: grid;
+    grid-auto-flow: row;
 }

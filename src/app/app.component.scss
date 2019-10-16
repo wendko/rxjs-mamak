@@ -1,3 +1,5 @@
+@import 'shared.scss';
+
 .flex-container {
   display: flex;
   align-items: stretch;
@@ -12,4 +14,14 @@
     padding: 0px 10px;
     border: 1px solid #bebebe;
     background: repeating-linear-gradient(#bebebe, white 3px, white 20px);
+    display: grid;
+    grid-template-rows: 1fr 1fr 3fr;
+}
+
+.sidebar-title {
+    @include sidebarTitle;
+}
+
+.timer {
+    place-self: center;
 }

@@ -1,6 +1,8 @@
-<div class="timer-title">
-    TIMER
-</div>
-<div class="timer-text">
-    {{ showTimeIsUp ? 'Time is up!' :  (time$  | async) + 's left' }}
+<div class="timer-container">
+    <label class="timer-title">
+        TIMER
+    </label>
+    <label class="timer-text">
+        {{ !!(showTimesUpMsg$ | async)? 'Time is up!' :  (time$  | async) + 's left' }}
+    </label>
 </div>
