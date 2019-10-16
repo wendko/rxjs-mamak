@@ -5,11 +5,21 @@
 
 
 <div class="game-container">
-    <div class="instructions" *ngIf="showInstructions">
+    <div class="instructions" *ngIf="gameState === 'instructions'">
         <div class="instructions-text">
             Fulfill the orders within the time limit
             <br />
             Game starting in {{(countdown$ | async) || instructionsBuffer }}s
+        </div>
+    </div>
+
+    <div class="playarea" *ngIf="gameState === 'playing'">
+            
+        <div *ngFor="let food of currentSpawn">
+            <app-food [name]="food"></app-food>
+            <!-- <app-item style="position:fixed;transition:all 0.5s linear" [name]="item.name" [type]="item.type"
+                [positionX]="item.positionX">
+            </app-item> -->
         </div>
     </div>
 

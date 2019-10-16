@@ -3,6 +3,8 @@ import { interval, timer, combineLatest } from 'rxjs';
 import { finalize, map, take, takeUntil, tap, startWith, switchMap } from 'rxjs/operators';
 import { FoodService, TimeService } from 'src/app/services';
 
+
+type GameState = 'instructions' | 'playing' | 'end';
 @Component({
     selector: 'app-game',
     templateUrl: './game.component.html',
@@ -18,6 +20,8 @@ export class GameComponent implements OnInit {
     showOrderFulfilled: boolean;
 
 
+
+    gameState: GameState;
     showInstructions: boolean;
     instructionsBuffer = this.timeService.gameDelay / 1000;
     countdown$ = interval(1000).pipe(
@@ -25,9 +29,25 @@ export class GameComponent implements OnInit {
         map(val => this.instructionsBuffer - val),
         finalize(() => {
             this.foodService.nextOrder$.next();
-            this.showInstructions = false;
+            this.gameState = 'playing';
         })
     );
+    counter = 0;
+    currentSpawn: string[][];
+    spawningFood$ = combineLatest([
+        this.foodService.prepOrder$,
+        this.foodService.nonOrder$,
+        this.foodService.nonOrder$
+    ]).pipe(
+        map(([orders, nonOrder1, nonOrder2]) => {
+            const spawn = [orders[this.counter++], nonOrder1, nonOrder2];
+            if (this.counter > 2) { this.counter = 0 }
+            console.log(spawn);
+            this.currentSpawn = spawn;
+            return spawn;
+        }),
+        takeUntil(timer(this.timeService.gameDuration + this.timeService.gameEndBuffer))
+    )
 
     constructor(
         private foodService: FoodService,
@@ -40,20 +60,9 @@ export class GameComponent implements OnInit {
 
     ngOnInit() {
         this.showInstructions = true;
+        this.gameState = 'instructions';
+        this.spawningFood$.subscribe();
 
-
-        let counter = 0;
-        combineLatest([
-            this.foodService.prepOrder$,
-            this.foodService.nonOrder$,
-            this.foodService.nonOrder$
-        ]).pipe(
-            tap(([orders, nonOrder1, nonOrder2]) => {
-                console.log(orders[counter++], nonOrder1, nonOrder2);
-                if (counter > 2) { counter = 0 }
-            }),
-            takeUntil(timer(this.timeService.gameDuration + this.timeService.gameEndBuffer))
-        ).subscribe();
 
 
 
