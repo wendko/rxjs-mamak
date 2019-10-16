@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { interval, timer, combineLatest } from 'rxjs';
+import { interval, timer, combineLatest, merge } from 'rxjs';
 import { finalize, map, take, takeUntil, tap, startWith, switchMap } from 'rxjs/operators';
 import { FoodService, TimeService } from 'src/app/services';
 
@@ -28,26 +28,26 @@ export class GameComponent implements OnInit {
         take(this.instructionsBuffer + 1),
         map(val => this.instructionsBuffer - val),
         finalize(() => {
-            this.foodService.nextOrder$.next();
+            this.foodService.requestOrder$.next();
             this.gameState = 'playing';
         })
     );
     counter = 0;
     currentSpawn: string[][];
     spawningFood$ = combineLatest([
-        this.foodService.prepOrder$,
+        this.foodService.currentOrder$.asObservable(),
         this.foodService.nonOrder$,
         this.foodService.nonOrder$
     ]).pipe(
         map(([orders, nonOrder1, nonOrder2]) => {
             const spawn = [orders[this.counter++], nonOrder1, nonOrder2];
             if (this.counter > 2) { this.counter = 0 }
-            console.log(spawn);
             this.currentSpawn = spawn;
             return spawn;
         }),
-        takeUntil(timer(this.timeService.gameDuration + this.timeService.gameEndBuffer))
-    )
+        takeUntil(timer(this.timeService.gameDuration + this.timeService.gameEndBuffer)),
+    );
+
 
     constructor(
         private foodService: FoodService,
@@ -61,9 +61,12 @@ export class GameComponent implements OnInit {
     ngOnInit() {
         this.showInstructions = true;
         this.gameState = 'instructions';
-        this.spawningFood$.subscribe();
-
-
+        merge(
+            this.spawningFood$,
+            this.timeService.gameTimer$.pipe(
+                finalize(() => this.gameState = 'end')
+            )
+        ).subscribe();
 
 
 

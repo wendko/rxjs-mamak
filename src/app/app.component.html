@@ -17,9 +17,10 @@
         
     </div>
     <div class="orders-list">
-        <label class="sidebar-title">Orders completed</label>
-
-        
+        <label class="sidebar-title">Current order</label>
+        <div *ngIf="(foodService.currentOrder$ | async) as nextOrder">
+            <app-food *ngFor="let order of nextOrder" [name]="order"></app-food>
+        </div>
     </div>
 
 <!-- 

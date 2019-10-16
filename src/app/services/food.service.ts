@@ -14,14 +14,15 @@ interface Item {
 })
 export class FoodService {
 
-    nextOrder$ = new Subject();
+    requestOrder$ = new Subject();
+    currentOrder$ = new Subject<string[]>();
 
     nonOrder$ = interval(1000).pipe(
         map(() => Object.keys(Food)[Math.floor(Math.random() * Math.floor(Object.keys(Food).length))])
     );
 
-    prepOrder$ = this.nextOrder$.asObservable().pipe(
-        map(() => {
+    prepOrder$ = this.requestOrder$.asObservable().pipe(
+        tap(() => {
             const allFood = Object.keys(Food);
             // Get random 3 items
             let newOrder = Array.of(
@@ -29,7 +30,7 @@ export class FoodService {
                 allFood[Math.floor(Math.random() * Math.floor(allFood.length))],
                 allFood[Math.floor(Math.random() * Math.floor(allFood.length))],
             );
-            return newOrder;
+            this.currentOrder$.next(newOrder);
         })
     );
 
@@ -56,6 +57,13 @@ export class FoodService {
 
 
     constructor() {
+        this.prepOrder$.subscribe();
+
+
+
+
+
+
         this.reset();
         this.maxOrderCount = this.randomizeIndex(2, 2);
     }

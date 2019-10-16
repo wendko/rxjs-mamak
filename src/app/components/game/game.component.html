@@ -14,12 +14,18 @@
     </div>
 
     <div class="playarea" *ngIf="gameState === 'playing'">
-            
         <div *ngFor="let food of currentSpawn">
             <app-food [name]="food"></app-food>
-            <!-- <app-item style="position:fixed;transition:all 0.5s linear" [name]="item.name" [type]="item.type"
-                [positionX]="item.positionX">
-            </app-item> -->
+        </div>
+    </div>
+
+    <div class="game-over" *ngIf="gameState === 'end'">
+        <div class="instructions-text">
+            Game over!
+            <br />
+            Your score is 123
+            <br />
+            Thanks for playing!
         </div>
     </div>
 
