@@ -14,9 +14,12 @@
     </div>
 
     <div class="playarea" *ngIf="gameState === 'playing'">
-        <div *ngFor="let food of currentSpawn">
-            <app-food [name]="food"></app-food>
-        </div>
+        <!-- <app-food name="tehtarik" [descending]="true"></app-food> -->
+        <!-- <app-food name="asamlaksa" [descending]="true"></app-food> -->
+        <!-- <app-food name="roticanai" [descending]="true"></app-food> -->
+
+        <app-food *ngFor="let food of currentSpawn" [name]="food" [descending]="true">
+        </app-food>
     </div>
 
     <div class="game-over" *ngIf="gameState === 'end'">

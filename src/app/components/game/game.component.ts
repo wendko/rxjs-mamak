@@ -64,7 +64,7 @@ export class GameComponent implements OnInit {
         merge(
             this.spawningFood$,
             this.timeService.gameTimer$.pipe(
-                finalize(() => this.gameState = 'end')
+                // finalize(() => this.gameState = 'end')
             )
         ).subscribe();
 
