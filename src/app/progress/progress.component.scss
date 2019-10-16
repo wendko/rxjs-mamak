@@ -1,8 +1,14 @@
-.progress-container, .orders {
+.progress-container {
     display: grid;
     grid-auto-flow: column;
+    grid-template-columns: repeat(2, 1fr);
     >* {
         outline: 1px dashed green;
         text-align: center;
     }
+}
+
+.order-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }

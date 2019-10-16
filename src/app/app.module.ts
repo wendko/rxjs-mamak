@@ -5,10 +5,12 @@ import { AppComponent } from './app.component';
 import { GameService } from './game.service';
 import { ProgressComponent } from './progress/progress.component';
 import { GameComponent } from './game/game.component';
+import { ItemComponent } from './item/item.component';
 
 const COMPONENTS = [
     ProgressComponent,
-    GameComponent
+    GameComponent,
+    ItemComponent
 ];
 
 @NgModule({

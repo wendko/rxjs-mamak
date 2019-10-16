@@ -13,15 +13,27 @@
             </span>
         </div>
     </div>
-    <div class="orders" *ngIf="(gameService.orderList$ | async) as orderList">
-        <div class="order-count">
-            <div>Orders</div>
-            <div>{{orderList.length}}</div>
-        </div>
-        <div class="current-order" *ngIf="(gameService.currentOrder$ | async) as currentOrderIndex">
-            <div>Current order</div>
-            <div>{{orderList[currentOrderIndex-1]}}</div>
-             <!-- this is wrong -->
+    <div class="orders">
+        <!-- <div class="current-order" *ngIf="(gameService.orderList$ | async) as orderList"> -->
+        <div class="current-order">
+            <div>Orders: {{orderList?.length}}</div>
+            <div>
+                <div>Current order</div>
+                <!-- <div class="order-container">
+                    <app-item name="kopi" [small]="true" style="width: 100px"></app-item>
+                    <app-item name="kopi" [small]="true"></app-item>
+                    <app-item name="kopi" [small]="true"></app-item>
+                </div> -->
+                <div *ngIf="(gameService.currentOrder$ | async) as currentOrderIndex">
+                        currentOrderIndex: {{currentOrderIndex}}
+                </div>
+
+                <!-- <div class="order-container" *ngIf="(gameService.currentOrder$ | async) as currentOrderIndex">
+                    <app-item *ngFor="let itemName of orderList[currentOrderIndex]"
+                        [name]="itemName" [small]="true">
+                    </app-item>
+                </div> -->
+            </div>
         </div>
     </div>
 </div>

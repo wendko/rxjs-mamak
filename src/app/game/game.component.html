@@ -20,8 +20,8 @@
         <div class="points">
             Points collector
         </div>
-        <div *ngFor="let item of items">
-            {{item}}
+        <div *ngFor="let itemName of items">
+            <app-item [name]="itemName"></app-item>
         </div>
     </div>
 </ng-template>

@@ -1,0 +1,10 @@
+.container {
+    width: 100px;
+    // height: 100px;
+    justify-content: center;
+    display: flex;
+}
+
+.item { transform: scale(0.5) }
+
+.item-small { transform: scale(0.3) }
