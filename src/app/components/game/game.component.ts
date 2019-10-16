@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { timer } from 'rxjs';
-import { finalize, takeUntil, tap } from 'rxjs/operators';
-import { FoodService } from '../food.service';
-import { PlateComponent } from '../plate/plate.component';
-import { TimeService } from '../time.service';
+import { Component, OnInit } from '@angular/core';
+import { interval, timer, combineLatest } from 'rxjs';
+import { finalize, map, take, takeUntil, tap, startWith, switchMap } from 'rxjs/operators';
+import { FoodService, TimeService } from 'src/app/services';
 
 @Component({
     selector: 'app-game',
@@ -19,24 +17,50 @@ export class GameComponent implements OnInit {
     countdownText: string;
     showOrderFulfilled: boolean;
 
-    @ViewChild(PlateComponent) plateComponent;
+
+    showInstructions: boolean;
+    instructionsBuffer = this.timeService.gameDelay / 1000;
+    countdown$ = interval(1000).pipe(
+        take(this.instructionsBuffer + 1),
+        map(val => this.instructionsBuffer - val),
+        finalize(() => {
+            this.foodService.nextOrder$.next();
+            this.showInstructions = false;
+        })
+    );
 
     constructor(
         private foodService: FoodService,
-        private timeService: TimeService
+        private timeService: TimeService,
     ) {
         this.items = [];
         this.score = 0;
+    }
 
-        this.timeService.gameTimer$.pipe(
-            tap(console.log),
-            finalize(() => console.log('done!'))
+
+    ngOnInit() {
+        this.showInstructions = true;
+
+
+        let counter = 0;
+        combineLatest([
+            this.foodService.prepOrder$,
+            this.foodService.nonOrder$,
+            this.foodService.nonOrder$
+        ]).pipe(
+            tap(([orders, nonOrder1, nonOrder2]) => {
+                console.log(orders[counter++], nonOrder1, nonOrder2);
+                if (counter > 2) { counter = 0 }
+            }),
+            takeUntil(timer(this.timeService.gameDuration + this.timeService.gameEndBuffer))
         ).subscribe();
 
 
-    }
 
-    ngOnInit() {
+
+
+
+
         this.queuedItems = this.foodService.prepareItemsAndOrder();
         const singleOrderFulfilled$ = this.foodService.ordersCompletedSubject.pipe(
             tap(x => this.showOrderFulfilled = true)

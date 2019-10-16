@@ -3,6 +3,6 @@
         TIMER
     </label>
     <label class="timer-text">
-        {{ !!(showTimesUpMsg$ | async)? 'Time is up!' :  (time$  | async) + 's left' }}
+        {{ (showTimesUpMsg$ | async) ||  (time$  | async) }}
     </label>
 </div>

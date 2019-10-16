@@ -1,6 +1,28 @@
-export enum KEY_CODE {
-    RIGHT_ARROW = 39,
-    LEFT_ARROW = 37
+export const Food = {
+    TehTarik: 'TehTarik',
+    Kopi: 'Kopi',
+    SoyaCincau: 'SoyaCincau',
+    LimauAis: 'LimauAis',
+    SirapBandung: 'SirapBandung',
+    RotiCanai: 'RotiCanai',
+    NasiLemak: 'NasiLemak',
+    AsamLaksa: 'AsamLaksa',
+    RotiBakar: 'RotiBakar',
+    AyamRendang: 'AyamRendang'
+}
+
+
+
+
+
+
+
+
+
+export enum GameState {
+    Idle,
+    Start,
+    End
 }
 
 export enum ItemType {
@@ -15,6 +37,7 @@ export enum DrinkName {
     LimauAis,
     SirapBandung
 }
+
 
 export enum FoodName {
     RotiCanai,

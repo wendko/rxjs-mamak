@@ -1,3 +1,6 @@
+$c-primary: #413b9c;
+$c-secondary: #b66c6c;
+
 @mixin sidebarTitle {
     font-size: 30px;
     color: #212121;
@@ -6,4 +9,26 @@
 @mixin sidebarText {
     font-size: 25px;
     color: #535353;
+}
+
+@mixin gameAreaText {
+    font-size: 25px;
+    color: $c-primary;
+    text-align: center;
+}
+
+@mixin button($color) {
+    background-color: $color;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px black;
+    font-family: 'Fredoka One', cursive;
+    font-size: 25px;
+    &:hover {
+        box-shadow: 5px 5px black;
+    }
+    &:active {
+        transform: translateY(5px);
+    }
 }

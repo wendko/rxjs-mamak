@@ -1,3 +1,33 @@
+@import 'src/app/shared.scss';
+
+.game-container {
+    height: 90vh;
+    width: 80vw;
+}
+
+.game-container, .instructions {
+    display: grid;
+    place-items: center;
+}
+
+.instructions {
+    grid-gap: 20px;
+}
+
+.instructions-text {
+    @include gameAreaText;
+}
+
+button {
+    @include button($c-primary);
+}
+
+
+
+
+
+
+
 .font-large {
     font-size: -webkit-xxx-large;
 }
