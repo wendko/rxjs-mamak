@@ -14,10 +14,6 @@
     </div>
 
     <div class="playarea" *ngIf="gameState === 'playing'">
-        <!-- <app-food name="tehtarik" [descending]="true"></app-food> -->
-        <!-- <app-food name="asamlaksa" [descending]="true"></app-food> -->
-        <!-- <app-food name="roticanai" [descending]="true"></app-food> -->
-
         <app-food *ngFor="let food of currentSpawn" [name]="food" [descending]="true">
         </app-food>
     </div>

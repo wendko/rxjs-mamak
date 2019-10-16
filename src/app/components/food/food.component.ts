@@ -11,17 +11,21 @@ export class FoodComponent implements OnInit {
 
     @ViewChild('foodComp') foodComp: ElementRef;
 
+    maxTop = 85;
+    minTop = 15;
+    maxLeft = 70;
+    minLeft = 5;
+
+    getRandomPos = (min: number, max: number) => Math.random() * (max - min) + min;
     ngOnInit() {
         if (this.descending) {
-            // top: 15% - 85%
-            // left: 5% - 70%
-            this.foodComp.nativeElement.classList.add('game-food')
-            // this.foodComp.nativeElement.style.left = '70%';
+            this.foodComp.nativeElement.style.top = `${this.getRandomPos(this.maxTop, this.minTop)}%`;
+            this.foodComp.nativeElement.style.left = `${this.getRandomPos(this.maxLeft, this.minLeft)}%`;
             this.foodComp.nativeElement.animate([
                 { transform: `scale(0)` },
                 { transform: `scale(1)` }
             ], {
-                duration: 500,
+                duration: 100,
                 iterations: 1
             });
         }

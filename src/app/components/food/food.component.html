@@ -1,4 +1,4 @@
-<div #foodComp class="game-food">
+<div #foodComp [ngClass]="{'game-food' : descending}">
     <img src="https://res.cloudinary.com/wendko/image/upload/v1571240230/rxjs-mamak/{{name | lowercase}}.png" 
     width="100" height="100"/>
 </div>
