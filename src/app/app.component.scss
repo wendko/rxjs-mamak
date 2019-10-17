@@ -25,3 +25,12 @@
 .timer {
     place-self: center;
 }
+
+.score-container {
+    display: grid;
+    grid-auto-flow: row;
+}
+
+.score {
+    @include sidebarText;
+}

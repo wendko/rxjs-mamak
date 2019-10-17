@@ -12,9 +12,9 @@
     <div class="timer">
         <app-timer></app-timer>
     </div>
-    <div class="score">
+    <div class="score-container">
         <label class="sidebar-title">Score</label>
-        
+        <label class="score">{{foodService.currentScore$ | async}}</label>
     </div>
     <div class="orders-list">
         <label class="sidebar-title">Current order</label>

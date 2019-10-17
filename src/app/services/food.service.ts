@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { interval, Observable, ReplaySubject, timer, Subject, of } from 'rxjs';
-import { delay, takeUntil, tap, map } from 'rxjs/operators';
+import { interval, Observable, ReplaySubject, timer, Subject, of, combineLatest } from 'rxjs';
+import { delay, takeUntil, tap, map, scan, startWith } from 'rxjs/operators';
 import { DrinkName, FoodName, ItemType, Food } from '../enum';
 
 interface Item {
@@ -13,11 +13,14 @@ interface Item {
     providedIn: 'root'
 })
 export class FoodService {
+    clickedRightFoodScore = 2;
+    fulfillOrderScore = 5;
 
     requestOrder$ = new Subject();
     currentOrder$ = new Subject<string[]>();
+    currentOrderFulfilled: string[] = [];
 
-    nonOrder$ = interval(1000).pipe(
+    nonOrder$ = interval(1500).pipe(
         map(() => Object.keys(Food)[Math.floor(Math.random() * Math.floor(Object.keys(Food).length))])
     );
 
@@ -33,6 +36,28 @@ export class FoodService {
             this.currentOrder$.next(newOrder);
         })
     );
+    addScore$ = new Subject<number>();
+    currentScore$ = this.addScore$.asObservable().pipe(
+        startWith(0),
+        scan((a, b) => a + b, 0)
+    )
+    clickedFood$ = new Subject();
+    checkOrder$ = combineLatest([
+        this.currentOrder$.asObservable(),
+        this.clickedFood$.asObservable()
+    ]).pipe(
+        tap(([currentOrder, clickedFood]: [string[], string]) => {
+            if (currentOrder.includes(clickedFood)) {
+                this.currentOrderFulfilled.push(clickedFood);
+                this.addScore$.next(this.clickedRightFoodScore);
+            }
+            if (currentOrder.length === this.currentOrderFulfilled.length &&
+                JSON.stringify(currentOrder.sort()) === JSON.stringify(this.currentOrderFulfilled.sort())) {
+                console.log('fulfilled one order!');
+                this.addScore$.next(this.fulfillOrderScore);
+            }
+        }),
+    )
 
 
 

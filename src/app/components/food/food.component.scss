@@ -1,3 +1,12 @@
+@keyframes disappear {
+    100% { transform: scale(2) rotate(180deg); opacity: 0 }
+}
+
 .game-food {
     position: absolute;
+    transform-origin: center;
+}
+
+.disappear {
+    animation: disappear 0.1s linear both;
 }

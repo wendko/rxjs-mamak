@@ -1,4 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { fromEvent } from "rxjs";
+import { tap } from "rxjs/operators";
+import { FoodService } from "src/app/services";
 
 @Component({
     selector: 'app-food',
@@ -11,10 +14,12 @@ export class FoodComponent implements OnInit {
 
     @ViewChild('foodComp') foodComp: ElementRef;
 
-    maxTop = 85;
-    minTop = 15;
-    maxLeft = 70;
-    minLeft = 5;
+    private readonly maxTop = 85;
+    private readonly minTop = 15;
+    private readonly maxLeft = 70;
+    private readonly minLeft = 5;
+
+    constructor(private foodService: FoodService) { };
 
     getRandomPos = (min: number, max: number) => Math.random() * (max - min) + min;
     ngOnInit() {
@@ -28,6 +33,10 @@ export class FoodComponent implements OnInit {
                 duration: 100,
                 iterations: 1
             });
+            fromEvent(this.foodComp.nativeElement, 'click').pipe(
+                tap((e: Event) => this.foodService.clickedFood$.next((e.target as HTMLImageElement).alt)),
+                tap(() => this.foodComp.nativeElement.classList.add('disappear'))
+            ).subscribe();
         }
     }
 
