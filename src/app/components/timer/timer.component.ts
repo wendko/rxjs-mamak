@@ -12,7 +12,7 @@ export class TimerComponent {
     constructor(private timeService: TimeService) { }
     timeIsUp$ = new Subject<Boolean>();
     showTimesUpMsg$ = this.timeIsUp$.asObservable().pipe(
-        map(val => val ? 'Time is up!' : '')
+        map(val => val ? 'Time\'s up!' : '')
     );
     time$ = this.timeService.gameTimer$.pipe(
         map(val => `${(this.timeService.gameDuration / 1000) - +val}s left`),

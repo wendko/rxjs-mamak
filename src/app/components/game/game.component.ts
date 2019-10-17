@@ -57,6 +57,9 @@ export class GameComponent implements OnInit {
         this.score = 0;
     }
 
+    restart() {
+        location.reload();
+    }
 
     ngOnInit() {
         this.showInstructions = true;
@@ -64,10 +67,10 @@ export class GameComponent implements OnInit {
         merge(
             this.spawningFood$,
             this.timeService.gameTimer$.pipe(
-                // finalize(() => this.gameState = 'end') // working ok, disabled for dev purposes
+                finalize(() => this.gameState = 'end')
             ),
             this.foodService.checkOrder$,
-            this.foodService.currentScore$.pipe(tap(console.log))
+            this.foodService.currentScore$.pipe(tap(score => this.score = score))
         ).subscribe();
 
 
@@ -114,7 +117,7 @@ export class GameComponent implements OnInit {
     }
 
 
-    restart() {
+    restartweqwe() {
         this.showGameOver = false;
         this.foodService.reset();
         // more elegant reload!

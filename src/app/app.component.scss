@@ -1,12 +1,18 @@
 @import 'src/app/shared.scss';
 
-.flex-container {
-  display: flex;
-  align-items: stretch;
+.container {
+  display: grid;
+  grid-auto-flow: column;
 }
 
 * {
   font-family: 'Fredoka One', cursive
+}
+
+.title {
+    text-align: center;
+    color: $c-primary;    
+    font-size: 50px;
 }
 
 .sidebar {
@@ -33,4 +39,5 @@
 
 .score {
     @include sidebarText;
+    font-size: 45px;
 }

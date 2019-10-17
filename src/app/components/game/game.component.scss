@@ -25,41 +25,7 @@
     width: 100%;
 }
 
-
-
-.font-large {
-    font-size: -webkit-xxx-large;
-}
-
-.font-temporary {
-    font-size: xx-large;
-    animation: appearBriefly 2s linear;
-    opacity: 0;
-}
-
-.container {
-    margin:auto;
-    text-shadow: 2px 2px white;
-    text-align: center
-}
-
-@keyframes appearBriefly {
-    10%,90% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.btn-replay {
-    padding: 20px 30px;
-    border-radius: 100px;
-    font-size: larger;
-    transition: all 0.2s ease-in;
-    border: solid 1px blueviolet;
-}
-
-.btn-replay:hover {
-    box-shadow: 5px 5px 0px blueviolet;
+.btn-restart {
+    @include button($c-primary);
+    margin-top: 15px;
 }

@@ -10,7 +10,7 @@ export class TimeService {
 
     gameDelay = 0;
     gameInterval = 1000;
-    gameDuration = 60000;
+    gameDuration = 5000;
     gameEndBuffer = 1000;
 
     gameTimer$ = interval(this.gameInterval).pipe(

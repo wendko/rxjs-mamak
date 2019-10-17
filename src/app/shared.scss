@@ -1,18 +1,19 @@
 $c-primary: #413b9c;
-$c-secondary: #b66c6c;
+$c-secondary: #1a1558;
 
 @mixin sidebarTitle {
     font-size: 30px;
-    color: #212121;
+    color: $c-primary;
+    margin-bottom: 15px;
 }
 
 @mixin sidebarText {
-    font-size: 45px;
-    color: #535353;
+    font-size: 35px;
+    color: $c-secondary;
 }
 
 @mixin gameAreaText {
-    font-size: 25px;
+    font-size: 38px;
     color: $c-primary;
     text-align: center;
 }

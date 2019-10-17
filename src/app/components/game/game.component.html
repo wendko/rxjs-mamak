@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <div class="game-container">
     <div class="instructions" *ngIf="gameState === 'instructions'">
         <div class="instructions-text">
@@ -22,49 +16,12 @@
         <div class="instructions-text">
             Game over!
             <br />
-            Your score is {{foodService.currentScore$ | async}}
+            Your score is {{score}}
             <br />
             Thanks for playing!
+            <br />
+            <button type="button" class="btn-restart" (click)="restart()">Play again?</button>
         </div>
     </div>
 
-
-
-
-
-
-
-  <!-- style="background:url('assets/images/scott-webb-50450-unsplash.jpg');height:90vh;width:80vw;display:flex;flex-direction:row"> -->
-  <!-- <div *ngFor="let item of items">
-    <app-item style="position:fixed;transition:all 0.5s linear" [name]="item.name" [type]="item.type"
-      [positionX]="item.positionX">
-    </app-item>
-  </div>
-
-  <div class="container">
-    <div class="font-large">
-      {{countdownText}}
-    </div>
-
-    <div *ngIf="this.showOrderFulfilled" class="font-temporary">
-      Extra 2 points for completed order!
-    </div>
-
-    <div *ngIf="showGameOver">
-      <div *ngIf="!this.foodService.gameWon" class="font-large">
-        GAME OVER!
-        <br>
-        Your score is {{foodService.score}}.
-      </div>
-      <div *ngIf="this.foodService.gameWon" class="font-large">
-        YOU WON!
-        <br>
-        Your score is {{foodService.score}}.
-      </div>
-      <br>
-      <button class="btn-replay" (click)="restart()">
-        Play again
-      </button>
-    </div>
-  </div> -->
 </div>
